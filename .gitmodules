@@ -1,0 +1,12 @@
+[submodule "src/ofxOceanode_modules-artnet"]
+	path = src/ofxOceanode_modules-artnet
+	url = https://eduardfrigola@github.com/PlaymodesStudio/ofxOceanode_modules-artnet.git
+[submodule "src/ofxOceanode_modules-scripting"]
+	path = src/ofxOceanode_modules-scripting
+	url = https://eduardfrigola@github.com/PlaymodesStudio/ofxOceanode_modules-scripting.git
+[submodule "src/ofxOceanode_modules-texture"]
+	path = src/ofxOceanode_modules-texture
+	url = https://eduardfrigola@github.com/PlaymodesStudio/ofxOceanode_modules-texture.git
+[submodule "src/ofxOceanode_modules-vector_op"]
+	path = src/ofxOceanode_modules-vector_op
+	url = https://eduardfrigola@github.com/PlaymodesStudio/ofxOceanode_modules-vector_op.git

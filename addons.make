@@ -1,0 +1,7 @@
+ofxArtNet_PM
+ofxDatGui_PM
+ofxEasing
+ofxMidi
+ofxOceanode
+ofxOsc
+ofxSyphon
