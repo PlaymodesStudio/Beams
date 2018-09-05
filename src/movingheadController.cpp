@@ -27,27 +27,25 @@ void movingheadController::update(ofEventArgs &a){
     for(int i = 0; i < 32; i++){
         int index = i*16;
         //color wheel
-        tempOutput[index] = colorwheel->at(0);
+        tempOutput[index] = getValueAtIndex(colorwheel.get(), index);
         //strobe
         tempOutput[index+1] = strobe;
         //dimmer
-        if(intensity.get().size() > i){
-            tempOutput[index+2] = intensity.get()[i];
-        }
+        tempOutput[index+2] = getValueAtIndex(intensity.get(), index);
         //gobo
         tempOutput[index+3] = gobo;
         //frost
         tempOutput[index+7] = frost;
         //focus
         tempOutput[index+8] = focus;
-        if(pan.get().size() > i){
-            tempOutput[index+9] = pan.get()[i];
-            tempOutput[index+10] = pan.get()[i]*255 - int(pan.get()[i]*255);
-        }
-        if(tilt.get().size() > i){
-            tempOutput[index+11] = tilt.get()[i];
-            tempOutput[index+12] = tilt.get()[i]*255 - int(tilt.get()[i]*255);
-        }
+        //pan
+        float panAtIndex = getValueAtIndex(pan.get(), index);
+        tempOutput[index+9] = panAtIndex;
+        tempOutput[index+10] = panAtIndex*255 - int(panAtIndex*255);
+        //tilt
+        float tiltAtIndex = getValueAtIndex(tilt.get(), index);
+        tempOutput[index+11] = tiltAtIndex;
+        tempOutput[index+12] = tiltAtIndex*255 - int(tiltAtIndex*255);
         //lamp
         tempOutput[index+15] = 0;
     }

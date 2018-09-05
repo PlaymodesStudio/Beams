@@ -18,6 +18,16 @@ public:
     void update(ofEventArgs &a) override;
     
 private:
+    
+    float getValueAtIndex(const vector<float> &v, int index){
+        if(v.size() == 1 || v.size() <= index){
+            return v[0];
+        }
+        else{
+            return v[index];
+        }
+    }
+    
     //ofParameter<string> filename;
     ofParameter<vector<float>> pan;
     ofParameter<vector<float>> tilt;
