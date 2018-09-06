@@ -25,6 +25,8 @@ private:
     ofParameter<float>  smooth;
     ofParameter<vector<float>>   input;
     ofParameter<vector<float>>   output;
+    ofParameter<vector<float>>   outputPositive;
+    ofParameter<vector<float>>   outputNegative;
     
     vector<float>   inputStore;
     vector<float>   outputStore;
