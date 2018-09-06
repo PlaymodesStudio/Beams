@@ -23,7 +23,7 @@ void ofApp::setup(){
     ofSetEscapeQuitsApp(false);
     ofDisableArbTex();
     ofSetVerticalSync(false);
-    ofSetFrameRate(120);
+    ofSetFrameRate(40);
     
     auto reg = make_shared<ofxOceanodeNodeRegistry>();
     auto treg = make_shared<ofxOceanodeTypesRegistry>();

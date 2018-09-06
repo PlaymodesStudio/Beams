@@ -8,16 +8,38 @@
 #ifndef movingheadController_h
 #define movingheadController_h
 
-#include "ofxOceanodeNodeModel.h"
+#include "ofxOceanodeNodeModelExternalWindow.h"
 
-class movingheadController : public ofxOceanodeNodeModel{
+class movingheadController : public ofxOceanodeNodeModelExternalWindow{
 public:
     movingheadController();
-    ~movingheadController(){};
+    ~movingheadController(){
+         if(numIdentifier != -1){
+             saveCalibration();
+         }
+    };
+    
+    void setup() override{
+        if(numIdentifier != -1){
+            loadCalibration();
+        }
+    }
     
     void update(ofEventArgs &a) override;
     
 private:
+    
+    void saveCalibration();
+    void loadCalibration();
+    
+    void drawInExternalWindow(ofEventArgs &e) override;
+    void windowResized(ofResizeEventArgs &a) override;
+    void keyPressed(ofKeyEventArgs &a) override;
+    void keyReleased(ofKeyEventArgs &a) override;
+    
+    void mousePressed(ofMouseEventArgs &a) override;
+    void mouseReleased(ofMouseEventArgs &a) override;
+    void mouseDragged(ofMouseEventArgs &a) override;
     
     float getValueAtIndex(const vector<float> &v, int index){
         if(v.size() == 1 || v.size() <= index){
@@ -29,6 +51,7 @@ private:
     }
     
     //ofParameter<string> filename;
+    ofParameter<bool> invertPan;
     ofParameter<vector<float>> pan;
     ofParameter<vector<float>> tilt;
     ofParameter<vector<float>> intensity;
@@ -38,6 +61,18 @@ private:
     ofParameter<float> frost;
     ofParameter<float> focus;
     ofParameter<vector<float>> output;
+    
+    vector<float> minPan;
+    vector<float> maxPan;
+    vector<float> minTilt;
+    vector<float> maxTilt;
+    
+    
+    float originalValue;
+    vector<ofRectangle> points;
+    int indexClicked;
+    bool isHorizontal;
+    glm::vec2 initialClicPos;
 };
 
 #endif /* movingheadController_h */
