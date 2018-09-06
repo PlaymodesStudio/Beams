@@ -65,6 +65,7 @@
 		9150F94721FE0E44D16DA0CC /* baseOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44449692EA3A4B7FBABCF29 /* baseOscillator.cpp */; };
 		9BD777923C7E370A961526AC /* envelopeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4655B54F461ED6D3FD64F179 /* envelopeGenerator.cpp */; };
 		9ECB03F755B67656BA19F9E7 /* movingheadController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06AED0B10BF5278780F9CC6 /* movingheadController.cpp */; };
+		9F13AEAA21412B0D002F4574 /* manualOscillatorBank.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F13AEA821412B0D002F4574 /* manualOscillatorBank.cpp */; };
 		9F5453E2210F1EA300F9527F /* audioEngineController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5453E0210F1EA300F9527F /* audioEngineController.cpp */; };
 		9F5453EC21105E8F00F9527F /* pantiltEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5453EA21105E8F00F9527F /* pantiltEditor.cpp */; };
 		9FB8AE6ABDA40CD0274A29BA /* oscillatorTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 123BA4F448ED422A2D4B94DC /* oscillatorTexture.cpp */; };
@@ -278,6 +279,8 @@
 		9C1A96A2891A3C36C7DCA0F7 /* phasor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = phasor.cpp; path = ../../../addons/ofxOceanode/src/Nodes/Default_Nodes/Generators/phasor.cpp; sourceTree = SOURCE_ROOT; };
 		9C7A8492A4E58437944DDF60 /* function_call.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = function_call.hpp; path = "src/ofxOceanode_modules-scripting/chaiscript/dispatchkit/function_call.hpp"; sourceTree = SOURCE_ROOT; };
 		9E034FA57FE251AC33904E82 /* ofxDatGuiThemes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDatGuiThemes.h; path = ../../../addons/ofxDatGui_PM/src/themes/ofxDatGuiThemes.h; sourceTree = SOURCE_ROOT; };
+		9F13AEA821412B0D002F4574 /* manualOscillatorBank.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = manualOscillatorBank.cpp; sourceTree = "<group>"; };
+		9F13AEA921412B0D002F4574 /* manualOscillatorBank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = manualOscillatorBank.h; sourceTree = "<group>"; };
 		9F5453E0210F1EA300F9527F /* audioEngineController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audioEngineController.cpp; sourceTree = "<group>"; };
 		9F5453E1210F1EA300F9527F /* audioEngineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audioEngineController.h; sourceTree = "<group>"; };
 		9F5453EA21105E8F00F9527F /* pantiltEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pantiltEditor.cpp; sourceTree = "<group>"; };
@@ -1021,6 +1024,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				9F13AEA821412B0D002F4574 /* manualOscillatorBank.cpp */,
+				9F13AEA921412B0D002F4574 /* manualOscillatorBank.h */,
 				9F5453EA21105E8F00F9527F /* pantiltEditor.cpp */,
 				9F5453EB21105E8F00F9527F /* pantiltEditor.h */,
 				9F5453E0210F1EA300F9527F /* audioEngineController.cpp */,
@@ -1315,6 +1320,7 @@
 				C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */,
 				0546D1A38E13BD319CC9755B /* OscReceivedElements.cpp in Sources */,
 				879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */,
+				9F13AEAA21412B0D002F4574 /* manualOscillatorBank.cpp in Sources */,
 				1F558B76FB3412843DDAA031 /* ofxSyphonClient.mm in Sources */,
 				8D60C222CBD3F869382832E9 /* ofxSyphonServer.mm in Sources */,
 				11DF9AB1B4EAA63E3B190CA0 /* ofxSyphonServerDirectory.mm in Sources */,
@@ -1432,7 +1438,10 @@
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
-				GCC_PREPROCESSOR_DEFINITIONS = OFXOCEANODE_USE_OSC;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					OFXOCEANODE_USE_RANDOMSEED,
+					OFXOCEANODE_USE_OSC,
+				);
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "APPSTORE=1";
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
@@ -1683,7 +1692,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
-				GCC_PREPROCESSOR_DEFINITIONS = OFXOCEANODE_USE_OSC;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					OFXOCEANODE_USE_RANDOMSEED,
+					OFXOCEANODE_USE_OSC,
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
@@ -1763,7 +1775,10 @@
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
-				GCC_PREPROCESSOR_DEFINITIONS = OFXOCEANODE_USE_OSC;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					OFXOCEANODE_USE_RANDOMSEED,
+					OFXOCEANODE_USE_OSC,
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
