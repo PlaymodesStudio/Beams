@@ -14,6 +14,7 @@
 #include "audioEngineController.h"
 #include "delta.h"
 #include "pantiltEditor.h"
+#include "manualOscillatorBank.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -39,6 +40,7 @@ void ofApp::setup(){
     reg->registerModel<audioEngineController>("OSC");
     reg->registerModel<delta>("OP");
     reg->registerModel<panTiltEditor>("MovingHeads");
+    reg->registerModel<manualOscillatorBank>("Generators");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
