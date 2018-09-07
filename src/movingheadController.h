@@ -51,6 +51,8 @@ private:
         }
     }
     
+    ofEventListener dropdownListener;
+    
     //ofParameter<string> filename;
     ofParameter<bool> invertPan;
     ofParameter<vector<float>> pan;

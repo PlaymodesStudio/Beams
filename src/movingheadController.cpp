@@ -12,12 +12,16 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     parameters->add(invertPan.set("Invert Pan", false));
     parameters->add(pan.set("Pan", {0}, {0}, {1}));
     parameters->add(tilt.set("Tilt", {0}, {0}, {1}));
-    parameters->add(colorwheel.set("Color", {0}, {0}, {1}));
-    parameters->add(createDropdownAbstractParameter("Color Selector", {"Dark Red", "Orange", "Aquamarine", "Deep Green", "Light Green", "lavender", "Pink", "Yellow", "Magenta", "Cyan", "CTO 1", "CTO 2", "CTB", "Dark Blue"}, colorDropdown));
+    parameters->add(createDropdownAbstractParameter("Color Selector", {"White", "Dark Red", "Blue", "Green", "Yellow", "Light Green", "Pink", "Turquoise", "Cyan", "Orange", "Rose", "UV", "CTO", "CTB"}, colorDropdown));
+    parameters->add(colorwheel.set("Color", {0}, {0}, {colorDropdown.getMax()}));
     parameters->add(strobe.set("Strobe", 0, 0, 1));
     parameters->add(gobo.set("Gobo", 0, 0, 1));
     parameters->add(frost.set("Frost", 0, 0, 1));
     addOutputParameterToGroupAndInfo(output.set("Output", {0}, {0}, {1}));
+    
+    dropdownListener = colorDropdown.newListener([this](int &i){
+        colorwheel = vector<int>(1, i);
+    });
     
     indexClicked = -1;
     points.resize(32);
@@ -67,7 +71,7 @@ void movingheadController::update(ofEventArgs &a){
         tempOutput[index+3] = tiltAtIndex*255 - int(tiltAtIndex*255);
         
         //color wheel
-        tempOutput[index+4] = getValueAtIndex(colorwheel.get(), i);
+        tempOutput[index+4] = ofMap(getValueAtIndex(colorwheel.get(), i), colorwheel.getMin()[0], colorwheel.getMax()[0]-1, 0.0, 120.0/255.0, true);
         
         //gobo
         tempOutput[index+6] = gobo;
