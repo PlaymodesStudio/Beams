@@ -55,6 +55,8 @@ void ofApp::setup(){
     
     controls = make_unique<ofxOceanodeControls>(container);
     controls->get<ofxOceanodeBPMController>()->setBPM(80);
+    
+    container->loadPersistent();
 }
 
 //--------------------------------------------------------------
@@ -69,7 +71,12 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    if(ofGetKeyPressed(OF_KEY_COMMAND)){
+        if(key == 's') container->savePersistent();
+        else if(key == 'u') container->updatePersistent();
+        else if(key == 'c') container->collapseGuis();
+        else if(key == 'e') container->expandGuis();
+    }
 }
 
 //--------------------------------------------------------------
