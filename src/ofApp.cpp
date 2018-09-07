@@ -18,6 +18,7 @@
 #include "strobeLightController.h"
 #include "colorGradient.h"
 #include "vectorModulator.h"
+#include "followPoint.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -47,6 +48,7 @@ void ofApp::setup(){
     reg->registerModel<strobeLightController>("PARS");
     reg->registerModel<colorGradient>("Color");
     reg->registerModel<vectorModulator>("MovingHeads");
+    reg->registerModel<followPoint>("MovingHeads");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
