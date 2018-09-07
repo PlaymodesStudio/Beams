@@ -13,10 +13,10 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     parameters->add(pan.set("Pan", {0}, {0}, {1}));
     parameters->add(tilt.set("Tilt", {0}, {0}, {1}));
     parameters->add(colorwheel.set("Color", {0}, {0}, {1}));
+    parameters->add(createDropdownAbstractParameter("Color Selector", {"Dark Red", "Orange", "Aquamarine", "Deep Green", "Light Green", "lavender", "Pink", "Yellow", "Magenta", "Cyan", "CTO 1", "CTO 2", "CTB", "Dark Blue"}, colorDropdown));
     parameters->add(strobe.set("Strobe", 0, 0, 1));
     parameters->add(gobo.set("Gobo", 0, 0, 1));
     parameters->add(frost.set("Frost", 0, 0, 1));
-    parameters->add(focus.set("Focus", 0, 0, 1));
     addOutputParameterToGroupAndInfo(output.set("Output", {0}, {0}, {1}));
     
     indexClicked = -1;
@@ -55,27 +55,34 @@ void movingheadController::update(ofEventArgs &a){
     
     for(int i = 0; i < 32; i++){
         int index = i*16;
-        //color wheel
-        tempOutput[index] = getValueAtIndex(colorwheel.get(), i);
-        //strobe
-        tempOutput[index+1] = strobe;
-        //dimmer
-        tempOutput[index+2] = getValueAtIndex(intensity.get(), i);
-        //gobo
-        tempOutput[index+3] = gobo;
-        //frost
-        tempOutput[index+7] = frost;
-        //focus
-        tempOutput[index+8] = focus;
         //pan
         float panAtIndex = getValueAtIndex(pan.get(), i);
         if(invertPan) panAtIndex = 1 - panAtIndex;
-        tempOutput[index+9] = panAtIndex;
-        tempOutput[index+10] = panAtIndex*255 - int(panAtIndex*255);
+        tempOutput[index] = panAtIndex;
+        tempOutput[index+1] = panAtIndex*255 - int(panAtIndex*255);
+        
         //tilt
         float tiltAtIndex = getValueAtIndex(tilt.get(), i);
-        tempOutput[index+11] = tiltAtIndex;
-        tempOutput[index+12] = tiltAtIndex*255 - int(tiltAtIndex*255);
+        tempOutput[index+2] = tiltAtIndex;
+        tempOutput[index+3] = tiltAtIndex*255 - int(tiltAtIndex*255);
+        
+        //color wheel
+        tempOutput[index+4] = getValueAtIndex(colorwheel.get(), i);
+        
+        //gobo
+        tempOutput[index+6] = gobo;
+        
+        //strobe
+        tempOutput[index+10] = strobe;
+        
+        //dimmer
+        float dimmerAtIndex = getValueAtIndex(intensity.get(), i);
+        tempOutput[index+11] = dimmerAtIndex;
+        tempOutput[index+12] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
+        
+        //frost
+        tempOutput[index+13] = frost;
+        
         //lamp
         tempOutput[index+15] = 0;
     }

@@ -41,7 +41,8 @@ private:
     void mouseReleased(ofMouseEventArgs &a) override;
     void mouseDragged(ofMouseEventArgs &a) override;
     
-    float getValueAtIndex(const vector<float> &v, int index){
+    template<typename T>
+    float getValueAtIndex(const vector<T> &v, int index){
         if(v.size() == 1 || v.size() <= index){
             return v[0];
         }
@@ -55,11 +56,11 @@ private:
     ofParameter<vector<float>> pan;
     ofParameter<vector<float>> tilt;
     ofParameter<vector<float>> intensity;
-    ofParameter<vector<float>> colorwheel;
+    ofParameter<vector<int>> colorwheel;
+    ofParameter<int> colorDropdown;
     ofParameter<float> strobe;
     ofParameter<float> gobo;
     ofParameter<float> frost;
-    ofParameter<float> focus;
     ofParameter<vector<float>> output;
     
     vector<float> minPan;
