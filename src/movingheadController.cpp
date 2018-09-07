@@ -36,10 +36,10 @@ void movingheadController::loadCalibration(){
         minTilt = json["MinTilt"].get<vector<float>>();
         maxTilt = json["MaxTilt"].get<vector<float>>();
     }else{
-        minPan = vector<float>(32, 0);
-        maxPan = vector<float>(32, 1);
-        minTilt = vector<float>(32, 0);
-        maxTilt = vector<float>(32, .5);
+        minPan = vector<float>(32, 0.5);
+        maxPan = vector<float>(32, 0.1667);
+        minTilt = vector<float>(32, 1);
+        maxTilt = vector<float>(32, 0.5);
     }
 }
 
@@ -62,11 +62,13 @@ void movingheadController::update(ofEventArgs &a){
         //pan
         float panAtIndex = getValueAtIndex(pan.get(), i);
         if(invertPan) panAtIndex = 1 - panAtIndex;
+        panAtIndex = ofMap(panAtIndex, 0., 1., minPan[i], maxPan[i]);
         tempOutput[index] = panAtIndex;
         tempOutput[index+1] = panAtIndex*255 - int(panAtIndex*255);
         
         //tilt
         float tiltAtIndex = getValueAtIndex(tilt.get(), i);
+        tiltAtIndex = ofMap(tiltAtIndex, 0., 1., minTilt[i], maxTilt[i]);
         tempOutput[index+2] = tiltAtIndex;
         tempOutput[index+3] = tiltAtIndex*255 - int(tiltAtIndex*255);
         
