@@ -9,13 +9,13 @@
 #include "audioEngineController.h"
 
 audioEngineController::audioEngineController() : ofxOceanodeNodeModel("Audio Controller"){
-    addParameterToGroupAndInfo(oscHost.set("Osc Host", "localhost")).isSavePreset = false;
-    addParameterToGroupAndInfo(oscPort.set("Osc Port", "11511")).isSavePreset = false;
+    addParameterToGroupAndInfo(oscHost.set("Osc Host", "localhost")).convertToProject();
+    addParameterToGroupAndInfo(oscPort.set("Osc Port", "11511")).convertToProject();
     parameters->add(presetNum.set("Preset Num", 0, 0, 100));
     //params.resize(7);
     for(int i = 0; i < 7; i++){
         params.push_back(ofParameter<vector<float>>());
-        parameters->add(params.back().set("param_" + ofToString(i), {0}, {0}, {1}));
+        addParameterToGroupAndInfo(params.back().set("param_" + ofToString(i), {0}, {0}, {1})).isSavePreset = false;
         listeners.push(params.back().newListener([this, i](vector<float> &vf){
             ofxOscMessage message;
             message.setAddress("audio/" + ofToString(i));
