@@ -15,6 +15,7 @@
 #include "delta.h"
 #include "pantiltEditor.h"
 #include "manualOscillatorBank.h"
+#include "strobeLightController.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -41,6 +42,7 @@ void ofApp::setup(){
     reg->registerModel<delta>("OP");
     reg->registerModel<panTiltEditor>("MovingHeads");
     reg->registerModel<manualOscillatorBank>("Generators");
+    reg->registerModel<strobeLightController>("PARS");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
