@@ -17,6 +17,7 @@
 #include "manualOscillatorBank.h"
 #include "strobeLightController.h"
 #include "colorGradient.h"
+#include "vectorModulator.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -45,6 +46,7 @@ void ofApp::setup(){
     reg->registerModel<manualOscillatorBank>("Generators");
     reg->registerModel<strobeLightController>("PARS");
     reg->registerModel<colorGradient>("Color");
+    reg->registerModel<vectorModulator>("MovingHeads");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
