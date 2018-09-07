@@ -16,6 +16,7 @@
 #include "pantiltEditor.h"
 #include "manualOscillatorBank.h"
 #include "strobeLightController.h"
+#include "colorGradient.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -43,6 +44,7 @@ void ofApp::setup(){
     reg->registerModel<panTiltEditor>("MovingHeads");
     reg->registerModel<manualOscillatorBank>("Generators");
     reg->registerModel<strobeLightController>("PARS");
+    reg->registerModel<colorGradient>("Color");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
