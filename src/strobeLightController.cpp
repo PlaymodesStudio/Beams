@@ -28,7 +28,7 @@ void strobeLightController::update(ofEventArgs &e){
         return p->at(0);
     });
     
-    int elementSize = 6;
+    int elementSize = 4;
     vector<float> tempOutput;
     tempOutput.resize(numElements*elementSize);
     for(int i = 0; i < numElements; i++){
@@ -38,8 +38,8 @@ void strobeLightController::update(ofEventArgs &e){
         tempOutput[(i*elementSize)+1] = ((getValueForPosition(green, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
         tempOutput[(i*elementSize)+2] = ((getValueForPosition(blue, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
         tempOutput[(i*elementSize)+3] = 0;
-        tempOutput[(i*elementSize)+4] = 0;
-        tempOutput[(i*elementSize)+5] = 0;
+//        tempOutput[(i*elementSize)+4] = 0;
+//        tempOutput[(i*elementSize)+5] = 0;
     }
     output = tempOutput;
 }
