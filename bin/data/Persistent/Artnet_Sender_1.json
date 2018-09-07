@@ -1,0 +1,12 @@
+{
+    "Output_0_Selector": "5",
+    "Output_1_Selector": "6",
+    "Output_2_Selector": "7",
+    "Output_3_Selector": "8",
+    "outputNode": [
+        "Sub:0 Univ:0 IP:192.168.1.100",
+        "Sub:0 Univ:1 IP:192.168.1.100",
+        "Sub:0 Univ:2 IP:192.168.1.100",
+        "Sub:0 Univ:3 IP:192.168.1.100"
+    ]
+}

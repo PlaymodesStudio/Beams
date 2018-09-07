@@ -1,0 +1,146 @@
+{
+    "Movinghead_Controller_1": {
+        "Output": {
+            "Artnet_Sender_1": {
+                "Input 0": null
+            }
+        }
+    },
+    "Movinghead_Controller_2": {
+        "Output": {
+            "Artnet_Sender_1": {
+                "Input 1": null
+            }
+        }
+    },
+    "Oscillator_Bank_1": {
+        "Oscillator Out": {
+            "Vector_Modulator_1": {
+                "Modulator": null
+            }
+        }
+    },
+    "Oscillator_Bank_2": {
+        "Oscillator Out": {
+            "Vector_Modulator_2": {
+                "Modulator": null
+            }
+        }
+    },
+    "Oscillator_Bank_3": {
+        "Oscillator Out": {
+            "Movinghead_Controller_1": {
+                "Intensity": null
+            }
+        }
+    },
+    "Oscillator_Bank_4": {
+        "Oscillator Out": {
+            "Vector_Modulator_3": {
+                "Modulator": null
+            }
+        }
+    },
+    "Oscillator_Bank_5": {
+        "Oscillator Out": {
+            "Vector_Modulator_4": {
+                "Modulator": null
+            }
+        }
+    },
+    "Oscillator_Bank_6": {
+        "Oscillator Out": {
+            "Movinghead_Controller_2": {
+                "Intensity": null
+            }
+        }
+    },
+    "Oscillator_Bank_7": {
+        "Oscillator Out": {
+            "StrobeLight_Controller_1": {
+                "Fader": null
+            }
+        }
+    },
+    "Oscillator_Bank_8": {
+        "Oscillator Out": {
+            "StrobeLight_Controller_2": {
+                "Fader": null
+            }
+        }
+    },
+    "Phasor_1": {
+        "Phasor Output": {
+            "Oscillator_Bank_1": {
+                "Phasor In": null
+            },
+            "Oscillator_Bank_2": {
+                "Phasor In": null
+            },
+            "Oscillator_Bank_3": {
+                "Phasor In": null
+            },
+            "Oscillator_Bank_4": {
+                "Phasor In": null
+            },
+            "Oscillator_Bank_5": {
+                "Phasor In": null
+            },
+            "Oscillator_Bank_6": {
+                "Phasor In": null
+            }
+        }
+    },
+    "Phasor_2": {
+        "Phasor Output": {
+            "Oscillator_Bank_7": {
+                "Phasor In": null
+            },
+            "Oscillator_Bank_8": {
+                "Phasor In": null
+            }
+        }
+    },
+    "StrobeLight_Controller_1": {
+        "Output": {
+            "Artnet_Sender_1": {
+                "Input 2": null
+            }
+        }
+    },
+    "StrobeLight_Controller_2": {
+        "Output": {
+            "Artnet_Sender_1": {
+                "Input 3": null
+            }
+        }
+    },
+    "Vector_Modulator_1": {
+        "Output": {
+            "Movinghead_Controller_1": {
+                "Pan": null
+            }
+        }
+    },
+    "Vector_Modulator_2": {
+        "Output": {
+            "Movinghead_Controller_1": {
+                "Tilt": null
+            }
+        }
+    },
+    "Vector_Modulator_3": {
+        "Output": {
+            "Movinghead_Controller_2": {
+                "Pan": null
+            }
+        }
+    },
+    "Vector_Modulator_4": {
+        "Output": {
+            "Movinghead_Controller_2": {
+                "Tilt": null
+            }
+        }
+    }
+}
