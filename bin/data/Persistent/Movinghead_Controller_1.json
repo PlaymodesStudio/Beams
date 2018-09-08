@@ -9,7 +9,10 @@
     ],
     "Frost": "0",
     "Gobo": "0",
+    "Intensity": 0.0,
     "Invert_Pan": "0",
+    "Pan": 0.0,
     "Show_Window": "0",
-    "Strobe": "1"
+    "Strobe": "1",
+    "Tilt": 0.0
 }
