@@ -12,11 +12,12 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     parameters->add(invertPan.set("Invert Pan", false));
     parameters->add(pan.set("Pan", {0}, {0}, {1}));
     parameters->add(tilt.set("Tilt", {0}, {0}, {1}));
-    parameters->add(createDropdownAbstractParameter("Color Selector", {"White", "Dark Red", "Blue", "Green", "Yellow", "Light Green", "Pink", "Turquoise", "Cyan", "Orange", "Rose", "UV", "CTO", "CTB"}, colorDropdown));
+    parameters->add(createDropdownAbstractParameter("Color", {"White", "Dark Red", "Blue", "Green", "Yellow", "Light Green", "Pink", "Turquoise", "Cyan", "Orange", "Rose", "UV", "CTO", "CTB"}, colorDropdown));
     parameters->add(colorwheel.set("Color", {0}, {0}, {colorDropdown.getMax()}));
     parameters->add(strobe.set("Strobe", 0, 0, 1));
     parameters->add(gobo.set("Gobo", 0, 0, 1));
     parameters->add(frost.set("Frost", 0, 0, 1));
+    parameters->add(masterFader.set("Master Fader", 1, 0, 1));
     addOutputParameterToGroupAndInfo(output.set("Output", {0}, {0}, {1}));
     
     dropdownListener = colorDropdown.newListener([this](int &i){
@@ -82,7 +83,7 @@ void movingheadController::update(ofEventArgs &a){
         tempOutput[index+10] = strobe;
         
         //dimmer
-        float dimmerAtIndex = getValueAtIndex(intensity.get(), i);
+        float dimmerAtIndex = getValueAtIndex(intensity.get(), i) * masterFader;
         tempOutput[index+11] = dimmerAtIndex;
         tempOutput[index+12] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
         

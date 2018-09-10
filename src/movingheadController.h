@@ -63,6 +63,7 @@ private:
     ofParameter<float> strobe;
     ofParameter<float> gobo;
     ofParameter<float> frost;
+    ofParameter<float> masterFader;
     ofParameter<vector<float>> output;
     
     vector<float> minPan;
