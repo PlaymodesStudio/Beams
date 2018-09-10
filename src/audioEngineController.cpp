@@ -13,12 +13,12 @@ audioEngineController::audioEngineController() : ofxOceanodeNodeModel("Audio Con
     addParameterToGroupAndInfo(oscPort.set("Osc Port", "11511")).convertToProject();
     parameters->add(presetNum.set("Preset Num", 0, 0, 100));
     //params.resize(7);
-    for(int i = 0; i < 7; i++){
+    for(int i = 0; i < 4; i++){
         params.push_back(ofParameter<vector<float>>());
         addParameterToGroupAndInfo(params.back().set("param_" + ofToString(i), {0}, {0}, {1})).isSavePreset = false;
         listeners.push(params.back().newListener([this, i](vector<float> &vf){
             ofxOscMessage message;
-            message.setAddress("audio/" + ofToString(i));
+            message.setAddress("/audio/" + ofToString(i));
             for(auto f : vf){
                 message.addFloatArg(f);
             }
@@ -39,7 +39,7 @@ void audioEngineController::oscHostAndPortListener(string &s){
 
 void audioEngineController::presetNumSender(int &i){
     ofxOscMessage message;
-    message.setAddress("audio/preset");
+    message.setAddress("/audio/preset");
     message.addIntArg(i);
     oscSender.sendMessage(message);
 }
