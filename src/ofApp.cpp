@@ -27,7 +27,7 @@ void ofApp::setup(){
     ofSetEscapeQuitsApp(false);
     ofDisableArbTex();
     ofSetVerticalSync(false);
-    ofSetFrameRate(40);
+    ofSetFrameRate(120);
     
     auto reg = make_shared<ofxOceanodeNodeRegistry>();
     auto treg = make_shared<ofxOceanodeTypesRegistry>();
@@ -58,7 +58,7 @@ void ofApp::setup(){
     canvas.setup();
     
     controls = make_unique<ofxOceanodeControls>(container);
-    controls->get<ofxOceanodeBPMController>()->setBPM(80);
+    controls->get<ofxOceanodeBPMController>()->setBPM(120 );
     
     container->loadPersistent();
 }
