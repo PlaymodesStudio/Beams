@@ -19,6 +19,7 @@
 #include "colorGradient.h"
 #include "vectorModulator.h"
 #include "followPoint.h"
+#include "vectorSwitcher.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -49,6 +50,7 @@ void ofApp::setup(){
     reg->registerModel<colorGradient>("Color");
     reg->registerModel<vectorModulator>("MovingHeads");
     reg->registerModel<followPoint>("MovingHeads");
+    reg->registerModel<vectorSwitcher>("Vector Operations");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
