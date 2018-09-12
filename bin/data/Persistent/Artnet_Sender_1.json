@@ -3,14 +3,14 @@
     "Input_1": -1.0,
     "Input_2": -1.0,
     "Input_3": -1.0,
-    "Output_0_Selector": "5",
-    "Output_1_Selector": "6",
-    "Output_2_Selector": "7",
-    "Output_3_Selector": "8",
+    "Output_0_Selector": "1",
+    "Output_1_Selector": "2",
+    "Output_2_Selector": "3",
+    "Output_3_Selector": "4",
     "outputNode": [
-        "",
-        "",
-        "@¨",
-        "³\n\u0001\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 ’\n\u0000€`\u0000\u0000€ž\f\u0000€`\u0000\u0000`ž\f\u0000€`\u0000\u0000ÐŸ\f\u0000€"
+        "Sub:0 Univ:0 IP:127.0.0.1",
+        "Sub:0 Univ:1 IP:127.0.0.1",
+        "Sub:0 Univ:2 IP:127.0.0.1",
+        "Sub:0 Univ:3 IP:127.0.0.1"
     ]
 }

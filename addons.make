@@ -1,7 +1,8 @@
-ofxArtNet_PM
+ofxArtNode
 ofxDatGui_PM
 ofxEasing
 ofxMidi
+ofxNetwork
 ofxOceanode
 ofxOsc
 ofxSyphon
