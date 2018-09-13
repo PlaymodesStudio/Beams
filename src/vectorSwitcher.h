@@ -23,32 +23,32 @@ public:
         parameters->add(output.set("Output", {0}, {0}, {1}));
 
         listener = inputSelector.newListener([this](vector<int> &v){
-            if(v.size() == max(max(input0->size(), input1->size()), input2->size())){
-                vector<float> tempOutput(v.size());
-                for(int i = 0; i < v.size(); i++){
-                    switch (v[i]) {
-                        case 0:
-                            tempOutput[i] == getValueForIndex(input0.get(), i);
-                            break;
-                        case 1:
-                            tempOutput[i] == getValueForIndex(input1.get(), i);
-                            break;
-                        case 2:
-                            tempOutput[i] == getValueForIndex(input2.get(), i);
-                            break;
-                        default:
-                            break;
-                    }
+            int size = max(max(input0->size(), input1->size()), max(input2->size(), v.size()));
+            vector<float> tempOutput(size);
+            for(int i = 0; i < v.size(); i++){
+                switch (getValueForIndex(inputSelector.get(), i)){
+                    case 0:
+                        tempOutput[i] = getValueForIndex(input0.get(), i);
+                        break;
+                    case 1:
+                        tempOutput[i] = getValueForIndex(input1.get(), i);
+                        break;
+                    case 2:
+                        tempOutput[i] = getValueForIndex(input2.get(), i);
+                        break;
+                    default:
+                        break;
                 }
-                output = tempOutput;
             }
+            output = tempOutput;
         });
     }
     
     
 private:
     
-    float getValueForIndex(const vector<float> &vf, int i){
+    template<typename T>
+    T getValueForIndex(const vector<T> &vf, int i){
         if(vf.size() == 1 || vf.size() <= i){
             return vf[0];
         }
