@@ -73,6 +73,7 @@
 		9BD777923C7E370A961526AC /* envelopeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4655B54F461ED6D3FD64F179 /* envelopeGenerator.cpp */; };
 		9ECB03F755B67656BA19F9E7 /* movingheadController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06AED0B10BF5278780F9CC6 /* movingheadController.cpp */; };
 		9FB8AE6ABDA40CD0274A29BA /* oscillatorTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 123BA4F448ED422A2D4B94DC /* oscillatorTexture.cpp */; };
+		9FCA990E214AA71900A8B2A4 /* switcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA990C214AA71800A8B2A4 /* switcher.cpp */; };
 		A7F232028F646FE8E4DFD621 /* ArtNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D6C050337BF5E7D15F7C63 /* ArtNode.cpp */; };
 		AA12BB979460264F7478443E /* valueEaser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D00378236FD73D5D8CF8C990 /* valueEaser.cpp */; };
 		ADE367465D2A8EBAD4C7A8D9 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADD194746185E2DA11468377 /* IpEndpointName.cpp */; };
@@ -305,6 +306,8 @@
 		9F24E0812149754200293C0A /* vectorSwitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vectorSwitcher.h; sourceTree = "<group>"; };
 		9F7986DC4EB05E75FCE2C777 /* ofxOscSender.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxOscSender.h; path = ../../../addons/ofxOsc/src/ofxOscSender.h; sourceTree = SOURCE_ROOT; };
 		9FA2A0B2E964C498EBE3ACF4 /* oscillatorFragShader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = oscillatorFragShader.h; path = "src/ofxOceanode_modules-texture/oscillatorFragShader.h"; sourceTree = SOURCE_ROOT; };
+		9FCA990C214AA71800A8B2A4 /* switcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = switcher.cpp; path = ../../../addons/ofxOceanode/src/Nodes/Default_Nodes/Modifiers/switcher.cpp; sourceTree = "<group>"; };
+		9FCA990D214AA71900A8B2A4 /* switcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = switcher.h; path = ../../../addons/ofxOceanode/src/Nodes/Default_Nodes/Modifiers/switcher.h; sourceTree = "<group>"; };
 		A13853A1B21F20177F44EE37 /* ofxDatGuiLabel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDatGuiLabel.h; path = ../../../addons/ofxDatGui_PM/src/components/ofxDatGuiLabel.h; sourceTree = SOURCE_ROOT; };
 		A2A156C2D14C4F39566F9478 /* exception_specification.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = exception_specification.hpp; path = "src/ofxOceanode_modules-scripting/chaiscript/dispatchkit/exception_specification.hpp"; sourceTree = SOURCE_ROOT; };
 		A2AAA8CA403479E6FCDF920E /* OscHostEndianness.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OscHostEndianness.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscHostEndianness.h; sourceTree = SOURCE_ROOT; };
@@ -973,6 +976,8 @@
 		C9E0C4F6A9698E8F0EF5E14C /* Modifiers */ = {
 			isa = PBXGroup;
 			children = (
+				9FCA990C214AA71800A8B2A4 /* switcher.cpp */,
+				9FCA990D214AA71900A8B2A4 /* switcher.h */,
 				D623E907C25C25D1AB411052 /* mapper.cpp */,
 				3B2B1469CBE279200D558FAB /* mapper.h */,
 				959F4777E3902536DC81AC0A /* ranger.cpp */,
@@ -1314,6 +1319,7 @@
 				3B08BD13D76B507752129349 /* scriptModule.cpp in Sources */,
 				9FB8AE6ABDA40CD0274A29BA /* oscillatorTexture.cpp in Sources */,
 				0AA13C54EE8C24EC793EA60E /* waveScope.cpp in Sources */,
+				9FCA990E214AA71900A8B2A4 /* switcher.cpp in Sources */,
 				25154474D8E4A83860E73344 /* subDimensionCombinator.cpp in Sources */,
 				37B621CAE9CCF5193AAB87D9 /* vectorChain.cpp in Sources */,
 				1EF0EE4A07F96BBB810A868B /* vectorItemOperations.cpp in Sources */,
