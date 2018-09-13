@@ -75,7 +75,7 @@ void followPoint::update(ofEventArgs &a){
     tiltL = tempTilts;
     for(int i = 0; i < movingHeadsR.size(); i++){
         int pointPos = i / (32 / points.size());
-        glm::vec2 orientInfo = calculateAlfa(movingHeadsR[i].getPosition(), points[pointPos], 0);
+        glm::vec2 orientInfo = calculateAlfa(movingHeadsR[i].getPosition(), points[pointPos], 1);
         float tilt = orientInfo.x;
         float pan = orientInfo.y;
         //            if(pan < 0){
@@ -183,7 +183,7 @@ glm::vec2 followPoint::calculateAlfa(glm::vec3 position, glm::vec3 lookAT, bool 
     else
     {
         result.y = ofRadToDeg(asin(myVector.z/R1));
-        result.x = 90+ofRadToDeg(asin(-myVector.y/R2));
+        result.x = ofRadToDeg(asin(-myVector.y/R2));
     }
     
     
