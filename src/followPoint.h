@@ -25,17 +25,23 @@ private:
     
     void keyPressed(ofKeyEventArgs &a) override;
     
+    glm::vec2 calculateAlfa(glm::vec3 position, glm::vec3 lookAT, bool orientMode);
+    
     ofParameter<vector<float>> pointsX;
     ofParameter<vector<float>> pointsY;
     ofParameter<vector<float>> pointsZ;
     
-    ofParameter<vector<float>> panOut1;
-    ofParameter<vector<float>> tiltOut1;
-    ofParameter<vector<float>> panOut2;
-    ofParameter<vector<float>> tiltOut2;
+    ofParameter<vector<float>> panL;
+    ofParameter<vector<float>> tiltL;
+    ofParameter<vector<float>> panR;
+    ofParameter<vector<float>> tiltR;
     
     vector<glm::vec3> points;
     ofEasyCam cam;
+    
+    vector<ofNode> movingHeadsL;
+    vector<ofNode> movingHeadsR;
+    ofRectangle limits;
 };
 
 #endif /* followPoint_h */
