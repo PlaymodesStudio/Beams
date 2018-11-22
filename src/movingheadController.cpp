@@ -8,139 +8,246 @@
 #include "movingheadController.h"
 
 movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindow("Movinghead Controller"){
-    parameters->add(intensity.set("Intensity", {0}, {0}, {1}));
-    parameters->add(invertPan.set("Invert Pan", false));
-    parameters->add(pan.set("Pan", {0}, {0}, {1}));
-    parameters->add(tilt.set("Tilt", {0}, {0}, {1}));
-    parameters->add(createDropdownAbstractParameter("Color", {"White", "Dark Red", "Blue", "Green", "Yellow", "Light Green", "Pink", "Turquoise", "Cyan", "Orange", "Rose", "UV", "CTO", "CTB"}, colorDropdown));
-    parameters->add(colorwheel.set("Color", {0}, {0}, {colorDropdown.getMax()}));
-    parameters->add(strobe.set("Strobe", 0, 0, 1));
-    parameters->add(gobo.set("Gobo", 0, 0, 1));
-    parameters->add(frost.set("Frost", 0, 0, 1));
+    numGroups = 4;
+    size.resize(numGroups);
+    intensity.resize(numGroups);
+    pan.resize(numGroups);
+    tilt.resize(numGroups);
+    colorDropdown.resize(numGroups);
+    colorwheel.resize(numGroups);
+    strobe.resize(numGroups);
+    gobo.resize(numGroups);
+    frost.resize(numGroups);
+    for(int i = 0 ; i < numGroups; i++){
+        ofParameter<char> label;
+        parameters->add(label.set("Group " + ofToString(i) + "      ----------------------------------", ' '));
+        parameters->add(size[i].set("Size " + ofToString(i), {1}, {1}, {500}));
+        parameters->add(intensity[i].set("Intensity " + ofToString(i), {0}, {0}, {1}));
+        parameters->add(pan[i].set("Pan " + ofToString(i), {0}, {-180}, {180}));
+        parameters->add(tilt[i].set("Tilt " + ofToString(i), {0}, {-180}, {180}));
+        parameters->add(createDropdownAbstractParameter("Color " + ofToString(i), {"White", "Deep Red", "Deep Blue", "Yellow", "Green", "Magenta", "Azure", "Red", "Dark Green", "Amber", "Blue", "Orange", "CTO", "UV filter"}, colorDropdown[i]));
+        parameters->add(colorwheel[i].set("Color " + ofToString(i), {0}, {0}, {colorDropdown[i].getMax()}));
+        parameters->add(strobe[i].set("Strobe " + ofToString(i), 0, 0, 1));
+        parameters->add(gobo[i].set("Gobo " + ofToString(i), 0, 0, 1));
+        parameters->add(frost[i].set("Frost " + ofToString(i), 0, 0, 1));
+        
+        dropdownListeners.push(colorDropdown[i].newListener([this, i](int &ind){
+            colorwheel[i] = vector<int>(1, ind);
+        }));
+    }
+    ofParameter<char> label;
+    parameters->add(label.set("Shared", ' '));
     parameters->add(masterFader.set("Master Fader", 1, 0, 1));
-    addOutputParameterToGroupAndInfo(output.set("Output", {0}, {0}, {1}));
+    addOutputParameterToGroupAndInfo(dmxOutput.set("Dmx Output", {0}, {0}, {1}));
+    addOutputParameterToGroupAndInfo(panOutput.set("Pan Output", {0}, {-180}, {180}));
+    addOutputParameterToGroupAndInfo(tiltOutput.set("Tilt Output", {0}, {-180}, {180}));
+    addOutputParameterToGroupAndInfo(colorOutput.set("Color Output", {0}, {0}, {1}));
     
-    dropdownListener = colorDropdown.newListener([this](int &i){
-        colorwheel = vector<int>(1, i);
-    });
+    
+    
     
     indexClicked = -1;
     points.resize(32);
     isHorizontal = true;
+    
+    panRange = 540;
+    tiltRange = 270;
 }
 
 void movingheadController::loadCalibration(){
-    ofJson json = ofLoadJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json");
-    if(!json.empty()){
-        minPan = json["MinPan"].get<vector<float>>();
-        maxPan = json["MaxPan"].get<vector<float>>();
-        minTilt = json["MinTilt"].get<vector<float>>();
-        maxTilt = json["MaxTilt"].get<vector<float>>();
-    }else{
-        minPan = vector<float>(32, 0.5);
-        maxPan = vector<float>(32, 0.1667);
-        minTilt = vector<float>(32, 1);
-        maxTilt = vector<float>(32, 0.5);
-    }
+//    ofJson json = ofLoadJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json");
+//    if(!json.empty()){
+//        minPan = json["MinPan"].get<vector<float>>();
+//        maxPan = json["MaxPan"].get<vector<float>>();
+//        minTilt = json["MinTilt"].get<vector<float>>();
+//        maxTilt = json["MaxTilt"].get<vector<float>>();
+//    }else{
+//        minPan = vector<float>(32, 0.5);
+//        maxPan = vector<float>(32, 0.1667);
+//        minTilt = vector<float>(32, 1);
+//        maxTilt = vector<float>(32, 0.5);
+//    }
 }
 
 void movingheadController::saveCalibration(){
-    ofJson json;
-    json["MinPan"] = minPan;
-    json["MaxPan"] = maxPan;
-    json["MinTilt"] = minTilt;
-    json["MaxTilt"] = maxTilt;
-    ofSavePrettyJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json", json);
+//    ofJson json;
+//    json["MinPan"] = minPan;
+//    json["MaxPan"] = maxPan;
+//    json["MinTilt"] = minTilt;
+//    json["MaxTilt"] = maxTilt;
+//    ofSavePrettyJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json", json);
 }
 
 void movingheadController::update(ofEventArgs &a){
-    vector<float> tempOutput;
-    int maxSize = max(pan.get().size(), tilt.get().size());
-    tempOutput.resize(16*32, 0);
+    int nChannels = 24;
     
-    for(int i = 0; i < 32; i++){
-        int index = i*16;
-        //pan
-        float panAtIndex = getValueAtIndex(pan.get(), i);
-        if(invertPan) panAtIndex = 1 - panAtIndex;
-        panAtIndex = ofMap(panAtIndex, 0., 1., minPan[i], maxPan[i]);
-        tempOutput[index] = panAtIndex;
-        tempOutput[index+1] = panAtIndex*255 - int(panAtIndex*255);
-        
-        //tilt
-        float tiltAtIndex = getValueAtIndex(tilt.get(), i);
-        tiltAtIndex = ofMap(tiltAtIndex, 0., 1., minTilt[i], maxTilt[i]);
-        tempOutput[index+2] = tiltAtIndex;
-        tempOutput[index+3] = tiltAtIndex*255 - int(tiltAtIndex*255);
-        
-        //color wheel
-        tempOutput[index+4] = ofMap(getValueAtIndex(colorwheel.get(), i), colorwheel.getMin()[0], colorwheel.getMax()[0]-1, 0.0, 120.0/255.0, true);
-        
-        //gobo
-        tempOutput[index+6] = gobo;
-        
-        //strobe
-        tempOutput[index+10] = strobe;
-        
-        //dimmer
-        float dimmerAtIndex = getValueAtIndex(intensity.get(), i) * masterFader;
-        tempOutput[index+11] = dimmerAtIndex;
-        tempOutput[index+12] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
-        
-        //frost
-        tempOutput[index+13] = frost;
-        
-        //lamp
-        tempOutput[index+15] = 0;
+    vector<vector<float>> dmxInfo;
+    vector<float> panInfo;
+    vector<float> tiltInfo;
+    vector<float> colorInfo;
+    
+    int totalNum = 0;
+    for(auto s : size) totalNum += s;
+    
+    dmxInfo.resize(totalNum, vector<float>(nChannels, 0));
+    panInfo.resize(totalNum, .5);
+    tiltInfo.resize(totalNum, .5);
+    colorInfo.resize(totalNum*3, .5); //3 color components;
+    
+    for(int i = 0; i < numGroups; i++){
+        int accumulateSizes = 0;
+        for(int k = 0; k < i; k++){
+            accumulateSizes += size[k];
+        }
+        for(int j = 0; j < size[i]; j++){
+            int index = j + accumulateSizes;
+            
+            //pan
+            float panAtIndex = getValueAtIndex(pan[i].get(), j);
+            panInfo[index] = panAtIndex;
+            panAtIndex = ofMap(panAtIndex, -panRange/2, panRange/2, 0, 1, true);
+            dmxInfo[index][0] = panAtIndex;
+            dmxInfo[index][1] = panAtIndex*255 - int(panAtIndex*255);
+            
+            //tilt
+            float tiltAtIndex = getValueAtIndex(tilt[i].get(), j);
+            tiltInfo[index] = tiltAtIndex;
+            tiltAtIndex = ofMap(tiltAtIndex, -tiltRange/2, tiltRange/2, 0, 1, true);
+            dmxInfo[index][2] = tiltAtIndex;
+            dmxInfo[index][3] = tiltAtIndex*255 - int(tiltAtIndex*255);
+            
+            //pan/tilt speed
+            dmxInfo[index][4] = 1/255;
+            
+            //color wheel
+            dmxInfo[index][6] = ofMap(getValueAtIndex(colorwheel[i].get(), j), colorwheel[i].getMin()[0], colorwheel[i].getMax()[0]-1, 128.0/255.0, 186/255.0, true);
+            
+            
+            //gobo
+            dmxInfo[index][9] = ofMap(gobo[i], 0, 1, 0, 87/255);
+            
+            //frost
+            dmxInfo[index][15] = ofMap(frost[i], 0, 1, 0, 180/255);
+            
+            //strobe
+            dmxInfo[index][21] = ofMap(strobe[i], 0, 1, 64/255, 96/255);
+            
+            
+            //dimmer
+            float dimmerAtIndex = getValueAtIndex(intensity[i].get(), j) * masterFader;
+            dmxInfo[index][22] = dimmerAtIndex;
+            dmxInfo[index][23] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
+            
+            ofColor colorValue;
+            switch (int(getValueAtIndex(colorwheel[i].get(), j))) {
+                case 0:
+                    colorValue = ofColor::white;
+                    break;
+                case 1:
+                    colorValue = ofColor::darkRed;
+                    break;
+                case 2:
+                    colorValue = ofColor::darkBlue;
+                    break;
+                case 3:
+                    colorValue = ofColor::yellow;
+                    break;
+                case 4:
+                    colorValue = ofColor::green;
+                    break;
+                case 5:
+                    colorValue = ofColor::magenta;
+                    break;
+                case 6:
+                    colorValue = ofColor::azure;
+                    break;
+                case 7:
+                    colorValue = ofColor::red;
+                    break;
+                case 8:
+                    colorValue = ofColor::darkGreen;
+                    break;
+                case 9:
+                    colorValue = ofColor(231, 194, 81);
+                    break;
+                case 10:
+                    colorValue = ofColor::blue;
+                    break;
+                case 11:
+                    colorValue = ofColor::orange;
+                    break;
+                case 12:
+                    colorValue = ofColor(246, 230, 199);
+                    break;
+                case 13:
+                    colorValue = ofColor(46, 48, 89);
+                    break;
+                    
+                    
+                default:
+                    colorValue = ofColor::white;
+                    break;
+            }
+            colorInfo[index*3] = float(colorValue[0]) / 255.0 * dimmerAtIndex;
+            colorInfo[(index*3)+1] = float(colorValue[1]) / 255.0 * dimmerAtIndex;
+            colorInfo[(index*3)+2] = float(colorValue[2]) / 255.0 * dimmerAtIndex;
+        }
     }
     
-    output = tempOutput;
+    vector<float> tempOutput(dmxInfo.size()*nChannels);
+    for(int i = 0; i < dmxInfo.size()*3; i++){
+        tempOutput[i] = dmxInfo[i/3][i%3];
+    }
+    dmxOutput = tempOutput;
+    panOutput = panInfo;
+    tiltOutput = tiltInfo;
+    colorOutput = colorInfo;
 }
 
 void movingheadController::drawInExternalWindow(ofEventArgs &e){
-    ofBackground(0);
-    ofSetColor(255);
-    for(int i = 0; i < points.size(); i++){
-        auto &point = points[i];
-        ofSetColor(255);
-        ofDrawCircle(point.getCenter(), point.getWidth()/2);
-        glm::vec3 numOffset = isHorizontal ? glm::vec3(-point.getWidth()/4, -point.getWidth()/2, 1) : glm::vec3(point.getWidth()/2, point.getWidth()/4, 1);
-        ofDrawBitmapString(ofToString(i), point.getCenter() + numOffset);
-        if(ofGetKeyPressed(OF_KEY_LEFT) || ofGetKeyPressed(OF_KEY_RIGHT)){
-            ofPath path;
-            path.setColor(ofColor::red);
-            path.arc(point.getCenter(), point.getWidth()/1.5, point.getWidth()/1.5, 0, 270);
-//            path.moveTo(point.getCenter());
-            path.draw();
-        }else if(ofGetKeyPressed(OF_KEY_UP) || ofGetKeyPressed(OF_KEY_DOWN)){
-            ofPath path;
-            path.setColor(ofColor::red);
-            path.arc(point.getCenter(), point.getWidth()/1.5, point.getWidth()/1.5, ofMap(minTilt[i], 0., 1., 140, 400), ofMap(maxTilt[i], 0., 1., 140, 400));
-            path.draw();
-        }
-    }
+//    ofBackground(0);
+//    ofSetColor(255);
+//    for(int i = 0; i < points.size(); i++){
+//        auto &point = points[i];
+//        ofSetColor(255);
+//        ofDrawCircle(point.getCenter(), point.getWidth()/2);
+//        glm::vec3 numOffset = isHorizontal ? glm::vec3(-point.getWidth()/4, -point.getWidth()/2, 1) : glm::vec3(point.getWidth()/2, point.getWidth()/4, 1);
+//        ofDrawBitmapString(ofToString(i), point.getCenter() + numOffset);
+//        if(ofGetKeyPressed(OF_KEY_LEFT) || ofGetKeyPressed(OF_KEY_RIGHT)){
+//            ofPath path;
+//            path.setColor(ofColor::red);
+//            path.arc(point.getCenter(), point.getWidth()/1.5, point.getWidth()/1.5, 0, 270);
+////            path.moveTo(point.getCenter());
+//            path.draw();
+//        }else if(ofGetKeyPressed(OF_KEY_UP) || ofGetKeyPressed(OF_KEY_DOWN)){
+//            ofPath path;
+//            path.setColor(ofColor::red);
+//            path.arc(point.getCenter(), point.getWidth()/1.5, point.getWidth()/1.5, ofMap(minTilt[i], 0., 1., 140, 400), ofMap(maxTilt[i], 0., 1., 140, 400));
+//            path.draw();
+//        }
+//    }
 }
 
 void movingheadController::windowResized(ofResizeEventArgs &a){
-    if(externalWindowRect.width >= externalWindowRect.height){
-        isHorizontal = true;
-        int center = externalWindowRect.height/2;
-        float step = float(externalWindowRect.width) / 32.0;
-        float size = min(externalWindowRect.height / 2, externalWindowRect.width/(32*4));
-        for(int i = 0; i < 32; i++){
-            int pos = (step*i) + step/2;
-            points[i].setFromCenter(pos, center, size*2, size*2);
-        }
-    }else{
-        isHorizontal = false;
-        int center = externalWindowRect.width/2;
-        float step = externalWindowRect.height / 32.0;
-        float size = min(externalWindowRect.width / 2, externalWindowRect.height/(32*4));
-        for(int i = 0; i < 32; i++){
-            int pos = (step*i) + step/2;
-            points[i].setFromCenter(center, pos, size*2, size*2);
-        }
-    }
+//    if(externalWindowRect.width >= externalWindowRect.height){
+//        isHorizontal = true;
+//        int center = externalWindowRect.height/2;
+//        float step = float(externalWindowRect.width) / 32.0;
+//        float size = min(externalWindowRect.height / 2, externalWindowRect.width/(32*4));
+//        for(int i = 0; i < 32; i++){
+//            int pos = (step*i) + step/2;
+//            points[i].setFromCenter(pos, center, size*2, size*2);
+//        }
+//    }else{
+//        isHorizontal = false;
+//        int center = externalWindowRect.width/2;
+//        float step = externalWindowRect.height / 32.0;
+//        float size = min(externalWindowRect.width / 2, externalWindowRect.height/(32*4));
+//        for(int i = 0; i < 32; i++){
+//            int pos = (step*i) + step/2;
+//            points[i].setFromCenter(center, pos, size*2, size*2);
+//        }
+//    }
 }
 
 void movingheadController::keyPressed(ofKeyEventArgs &a){
@@ -152,60 +259,60 @@ void movingheadController::keyReleased(ofKeyEventArgs &a){
 }
 
 void movingheadController::mousePressed(ofMouseEventArgs &a){
-    if(ofGetKeyPressed()){
-        for(int i = 0; i < points.size(); i++){
-            if(points[i].inside(a)){
-            indexClicked = i;
-            break;
-            }
-        }
-        if(ofGetKeyPressed(OF_KEY_LEFT)){
-            originalValue = minPan[indexClicked];
-        }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
-            originalValue = maxPan[indexClicked];
-        }else if(ofGetKeyPressed(OF_KEY_DOWN)){
-            originalValue = minTilt[indexClicked];
-        }else if(ofGetKeyPressed(OF_KEY_UP)){
-            originalValue = maxTilt[indexClicked];
-        }
-        initialClicPos = a;
-    }
+//    if(ofGetKeyPressed()){
+//        for(int i = 0; i < points.size(); i++){
+//            if(points[i].inside(a)){
+//            indexClicked = i;
+//            break;
+//            }
+//        }
+//        if(ofGetKeyPressed(OF_KEY_LEFT)){
+//            originalValue = minPan[indexClicked];
+//        }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
+//            originalValue = maxPan[indexClicked];
+//        }else if(ofGetKeyPressed(OF_KEY_DOWN)){
+//            originalValue = minTilt[indexClicked];
+//        }else if(ofGetKeyPressed(OF_KEY_UP)){
+//            originalValue = maxTilt[indexClicked];
+//        }
+//        initialClicPos = a;
+//    }
 }
 
 void movingheadController::mouseReleased(ofMouseEventArgs &a){
-    indexClicked = -1;
+//    indexClicked = -1;
 }
 
 void movingheadController::mouseDragged(ofMouseEventArgs &a){
-    if(indexClicked != -1){
-        glm::vec2 amountMoved = a - initialClicPos;
-        if(isHorizontal){
-            float modVal = -amountMoved.y/(externalWindowRect.height/2);
-            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
-            if(ofGetKeyPressed(OF_KEY_LEFT)){
-                minPan[indexClicked] = originalValue + modVal;
-            }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
-                maxPan[indexClicked] = originalValue + modVal;
-            }else if(ofGetKeyPressed(OF_KEY_DOWN)){
-                minTilt[indexClicked] = originalValue + modVal;
-            }else if(ofGetKeyPressed(OF_KEY_UP)){
-                maxTilt[indexClicked] = originalValue + modVal;
-            }
-            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(-amountMoved.y/(externalWindowRect.height/2), -1, 1) ;
-        }else{
-            float modVal = -amountMoved.x/(externalWindowRect.width/2);
-            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
-            if(ofGetKeyPressed(OF_KEY_LEFT)){
-                minPan[indexClicked] = originalValue + modVal;
-            }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
-                maxPan[indexClicked] = originalValue + modVal;
-            }else if(ofGetKeyPressed(OF_KEY_DOWN)){
-                minTilt[indexClicked] = originalValue + modVal;
-            }else if(ofGetKeyPressed(OF_KEY_UP)){
-                maxTilt[indexClicked] = originalValue + modVal;
-            }
-            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(amountMoved.x /(externalWindowRect.width/2), -1, 1);
-        }
-    }
+//    if(indexClicked != -1){
+//        glm::vec2 amountMoved = a - initialClicPos;
+//        if(isHorizontal){
+//            float modVal = -amountMoved.y/(externalWindowRect.height/2);
+//            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
+//            if(ofGetKeyPressed(OF_KEY_LEFT)){
+//                minPan[indexClicked] = originalValue + modVal;
+//            }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
+//                maxPan[indexClicked] = originalValue + modVal;
+//            }else if(ofGetKeyPressed(OF_KEY_DOWN)){
+//                minTilt[indexClicked] = originalValue + modVal;
+//            }else if(ofGetKeyPressed(OF_KEY_UP)){
+//                maxTilt[indexClicked] = originalValue + modVal;
+//            }
+//            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(-amountMoved.y/(externalWindowRect.height/2), -1, 1) ;
+//        }else{
+//            float modVal = -amountMoved.x/(externalWindowRect.width/2);
+//            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
+//            if(ofGetKeyPressed(OF_KEY_LEFT)){
+//                minPan[indexClicked] = originalValue + modVal;
+//            }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
+//                maxPan[indexClicked] = originalValue + modVal;
+//            }else if(ofGetKeyPressed(OF_KEY_DOWN)){
+//                minTilt[indexClicked] = originalValue + modVal;
+//            }else if(ofGetKeyPressed(OF_KEY_UP)){
+//                maxTilt[indexClicked] = originalValue + modVal;
+//            }
+//            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(amountMoved.x /(externalWindowRect.width/2), -1, 1);
+//        }
+//    }
 }
 

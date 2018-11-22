@@ -21,6 +21,7 @@ public:
 private:
     
     ofParameter<int> numElements;
+    ofParameter<int> lightType;
     ofParameter<vector<float>> red;
     ofParameter<vector<float>> green;
     ofParameter<vector<float>> blue;
@@ -29,8 +30,8 @@ private:
     ofParameter<float> masterFader;
     ofParameter<vector<float>> strobeRate;
     ofParameter<vector<float>> strobeWidth;
-    ofParameter<vector<float>> output;
-    
+    ofParameter<vector<float>> dmxOutput;
+    ofParameter<vector<float>> colorOutput;
 };
 
 #endif /* strobeLightController_h */

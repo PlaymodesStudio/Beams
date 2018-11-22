@@ -51,20 +51,23 @@ private:
         }
     }
     
-    ofEventListener dropdownListener;
+    ofEventListeners dropdownListeners;
     
-    //ofParameter<string> filename;
-    ofParameter<bool> invertPan;
-    ofParameter<vector<float>> pan;
-    ofParameter<vector<float>> tilt;
-    ofParameter<vector<float>> intensity;
-    ofParameter<vector<int>> colorwheel;
-    ofParameter<int> colorDropdown;
-    ofParameter<float> strobe;
-    ofParameter<float> gobo;
-    ofParameter<float> frost;
+    int numGroups;
+    vector<ofParameter<int>>    size;
+    vector<ofParameter<vector<float>>> pan;
+    vector<ofParameter<vector<float>>> tilt;
+    vector<ofParameter<vector<float>>> intensity;
+    vector<ofParameter<vector<int>>> colorwheel;
+    vector<ofParameter<int>> colorDropdown;
+    vector<ofParameter<float>> strobe;
+    vector<ofParameter<float>> gobo;
+    vector<ofParameter<float>> frost;
     ofParameter<float> masterFader;
-    ofParameter<vector<float>> output;
+    ofParameter<vector<float>> dmxOutput;
+    ofParameter<vector<float>> panOutput;
+    ofParameter<vector<float>> tiltOutput;
+    ofParameter<vector<float>> colorOutput;
     
     vector<float> minPan;
     vector<float> maxPan;
@@ -77,6 +80,9 @@ private:
     int indexClicked;
     bool isHorizontal;
     glm::vec2 initialClicPos;
+    
+    int panRange;
+    int tiltRange;
 };
 
 #endif /* movingheadController_h */

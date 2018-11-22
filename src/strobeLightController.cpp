@@ -8,6 +8,7 @@
 #include "strobeLightController.h"
 
 void strobeLightController::setup(){
+    parameters->add(lightType.set("Light Type", 0, 0, 1));
     parameters->add(numElements.set("Num Elements", 4, 0, 1000));
     parameters->add(red.set("Red", {1}, {0}, {1}));
     parameters->add(green.set("Green", {1}, {0}, {1}));
@@ -17,7 +18,8 @@ void strobeLightController::setup(){
     parameters->add(strobeRate.set("Strobe Rate", {0}, {0}, {1}));
     parameters->add(strobeWidth.set("Pulse Width", {1}, {0}, {1}));
     parameters->add(masterFader.set("Master Fader", 1, 0, 1));
-    parameters->add(output.set("Output", {0}, {0}, {1}));
+    parameters->add(dmxOutput.set("Dmx Output", {0}, {0}, {1}));
+    parameters->add(colorOutput.set("Color Output", {0}, {0}, {1}));
 }
 
 void strobeLightController::update(ofEventArgs &e){
@@ -28,18 +30,56 @@ void strobeLightController::update(ofEventArgs &e){
         return p->at(0);
     });
     
-    int elementSize = 4;
+    int elementSize = 0;
+    
+    switch (lightType) {
+        case 0:
+            elementSize = 4;
+            break;
+        case 1:
+            elementSize = 4;
+            break;
+            
+        default:
+            break;
+    }
+    
     vector<float> tempOutput;
+    vector<float> tempColors;
+    
     tempOutput.resize(numElements*elementSize);
+    tempColors.resize(numElements*3);
+    
     for(int i = 0; i < numElements; i++){
         float posSaturate = getValueForPosition(saturate, i);
         float posFader = getValueForPosition(fader, i);
-        tempOutput[(i*elementSize)] = ((getValueForPosition(red, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
-        tempOutput[(i*elementSize)+1] = ((getValueForPosition(green, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
-        tempOutput[(i*elementSize)+2] = ((getValueForPosition(blue, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
-        tempOutput[(i*elementSize)+3] = 0;
-//        tempOutput[(i*elementSize)+4] = 0;
-//        tempOutput[(i*elementSize)+5] = 0;
+        
+        float red_ = ((getValueForPosition(red, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
+        float green_ = ((getValueForPosition(green, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
+        float blue_ = ((getValueForPosition(blue, i) * (1-posSaturate)) + (1 * posSaturate)) * posFader * masterFader;
+        
+        tempColors[(i*3)] = red_;
+        tempColors[(i*3)+1] = green_;
+        tempColors[(i*3)+2] = blue_;
+        
+        switch (lightType) {
+            case 0:
+                tempOutput[(i*elementSize)] = red_;
+                tempOutput[(i*elementSize)+1] = green_;
+                tempOutput[(i*elementSize)+2] = blue_;
+                tempOutput[(i*elementSize)+3] = 0;
+                break;
+            case 1:
+                tempOutput[(i*elementSize)] = red_;
+                tempOutput[(i*elementSize)+1] = green_;
+                tempOutput[(i*elementSize)+2] = blue_;
+                tempOutput[(i*elementSize)+3] = 0;
+                break;
+                
+            default:
+                break;
+        }
     }
-    output = tempOutput;
+    dmxOutput = tempOutput;
+    colorOutput = tempColors;
 }
