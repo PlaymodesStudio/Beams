@@ -20,6 +20,8 @@
 #include "vectorModulator.h"
 #include "followPoint.h"
 #include "vectorSwitcher.h"
+#include "oscSender.h"
+#include "oscReceiver.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -51,6 +53,8 @@ void ofApp::setup(){
     reg->registerModel<vectorModulator>("MovingHeads");
     reg->registerModel<followPoint>("MovingHeads");
     reg->registerModel<vectorSwitcher>("Vector Operations");
+    reg->registerModel<oscSender>("OSC");
+    reg->registerModel<oscReceiver>("OSC");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
