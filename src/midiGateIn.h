@@ -17,6 +17,7 @@ public:
     midiGateIn();
     ~midiGateIn(){};
     
+    void setup() override;
     void update(ofEventArgs &e) override;
     
 private:
