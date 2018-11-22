@@ -55,13 +55,13 @@ void oscSender::update(ofEventArgs &a){
     };
     
     if(sender != nullptr){
-        int lastIndex = 0;
+        int lastIndex = 1;
         sendBanksStartingAtIndex(pan, tilt, lastIndex);
         
         int maxColors = colors[0]->size()/3;
         for(int i = 0; i < maxColors * 3; i += 3){
             ofxOscMessage m;
-            m.setAddress("/movingHead/" + ofToString(i/3) + "/color");
+            m.setAddress("/movingHead/" + ofToString((i/3)+1) + "/color");
             m.addFloatArg(getValForIndex(colors[0], i));
             m.addFloatArg(getValForIndex(colors[0], i+1));
             m.addFloatArg(getValForIndex(colors[0], i+2));
@@ -71,7 +71,7 @@ void oscSender::update(ofEventArgs &a){
         maxColors = colors[1]->size()/3;
         for(int i = 0; i < maxColors*3; i += 3){
             ofxOscMessage m;
-            m.setAddress("/wash/" + ofToString(i/3) + "/color");
+            m.setAddress("/wash/" + ofToString((i/3)+1) + "/color");
             m.addFloatArg(getValForIndex(colors[1], i));
             m.addFloatArg(getValForIndex(colors[1], i+1));
             m.addFloatArg(getValForIndex(colors[1], i+2));
@@ -81,7 +81,7 @@ void oscSender::update(ofEventArgs &a){
         maxColors = colors[2]->size()/3;
         for(int i = 0; i < maxColors*3; i += 3){
             ofxOscMessage m;
-            m.setAddress("/parL/" + ofToString(i/3) + "/color");
+            m.setAddress("/parL/" + ofToString((i/3)+1) + "/color");
             m.addFloatArg(getValForIndex(colors[2], i));
             m.addFloatArg(getValForIndex(colors[2], i+1));
             m.addFloatArg(getValForIndex(colors[2], i+2));
@@ -91,7 +91,7 @@ void oscSender::update(ofEventArgs &a){
         maxColors = colors[3]->size()/3;
         for(int i = 0; i < maxColors*3; i += 3){
             ofxOscMessage m;
-            m.setAddress("/parR/" + ofToString(i/3) + "/color");
+            m.setAddress("/parR/" + ofToString((i/3)+1) + "/color");
             m.addFloatArg(getValForIndex(colors[3], i));
             m.addFloatArg(getValForIndex(colors[3], i+1));
             m.addFloatArg(getValForIndex(colors[3], i+2));
