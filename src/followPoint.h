@@ -30,6 +30,8 @@ private:
     ofParameter<vector<float>> pointsX;
     ofParameter<vector<float>> pointsY;
     ofParameter<vector<float>> pointsZ;
+    ofParameter<bool> sortPoints;
+    ofParameter<bool> snakeSort;
     
     ofParameter<vector<float>> panL;
     ofParameter<vector<float>> tiltL;

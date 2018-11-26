@@ -8,24 +8,26 @@
 #include "followPoint.h"
 
 void followPoint::setup(){
-    parameters->add(pointsX.set("Points X", {.5}, {0}, {1}));
-    parameters->add(pointsY.set("Points Y", {.5}, {0}, {1}));
-    parameters->add(pointsZ.set("Points Z", {.5}, {0}, {1}));
+    parameters->add(pointsX.set("Points X", {0}, {-22.5}, {22.5}));
+    parameters->add(pointsY.set("Points Y", {0}, {0}, {100}));
+    parameters->add(pointsZ.set("Points Z", {0}, {-50}, {50}));
+    parameters->add(sortPoints.set("Sort Points", false));
+    parameters->add(snakeSort.set("Snake Sort", true));
     
-    parameters->add(panL.set("Pan L", {.5}, {0}, {1}));
-    parameters->add(tiltL.set("Tilt L", {.5}, {0}, {1}));
-    parameters->add(panR.set("Pan R", {.5}, {0}, {1}));
-    parameters->add(tiltR.set("Tilt R", {.5}, {0}, {1}));
+    parameters->add(panL.set("Pan L", {0}, {-180}, {180}));
+    parameters->add(tiltL.set("Tilt L", {0}, {-180}, {180}));
+    parameters->add(panR.set("Pan R", {0}, {-180}, {180}));
+    parameters->add(tiltR.set("Tilt R", {0}, {-180}, {180}));
     
-    movingHeadsL.resize(32);
+    movingHeadsL.resize(5);
     for(int i = 0; i < movingHeadsL.size(); i++){
-        movingHeadsL[i].setPosition(-2.5, 2, 48 - (3*i));
+        movingHeadsL[i].setPosition(-19.54567, 23.22634, -45 + (22.5*i));
         movingHeadsL[i].setScale(.1);
     }
     
-    movingHeadsR.resize(32);
+    movingHeadsR.resize(5);
     for(int i = 0; i < movingHeadsL.size(); i++){
-        movingHeadsR[i].setPosition(2.5, 2, 48 - (3*i));
+        movingHeadsR[i].setPosition(19.54567, 23.22634, -45 + (22.5*i));
         movingHeadsR[i].setScale(.1);
     }
     
@@ -48,43 +50,61 @@ void followPoint::update(ofEventArgs &a){
     for(int i = 0; i < points.size(); i++){
         auto &point =  points[i];
         point = glm::vec3(getValForIndex(pointsX.get(), i), getValForIndex(pointsY.get(), i), getValForIndex(pointsZ.get(), i));
-        point.x = ofMap(point.x, 0, 1, -2.5, 2.5);
-        point.y = ofMap(point.y, 0, 1, 2, 96);
-        point.z = ofMap(point.z, 0, 1, -48, 48);
+//        point.x = ofMap(point.x, 0, 1, -22.5, 22.5);
+//        point.y = ofMap(point.y, 0, 1, 0, 100);
+//        point.z = ofMap(point.z, 0, 1, -50, 50);
     }
     
-    std::sort(points.begin(), points.end(), [](glm::vec3 p1, glm::vec3 p2){return p1.z > p2.z;});
+    if(sortPoints){
+        std::sort(points.begin(), points.end(), [](glm::vec3 p1, glm::vec3 p2){return p1.z > p2.z;});
+    }
     
     glm::vec3 lookAtPos = points[0];
-    vector<float> tempPans(32);
-    vector<float> tempTilts(32);
+    vector<float> tempPans(5);
+    vector<float> tempTilts(5);
     for(int i = 0; i < movingHeadsL.size(); i++){
-        int pointPos = i / (32 / points.size());
+        int pointPos = 0;
+        if(points.size() < 5){
+            pointPos = floor(i / (5.0 / points.size()));
+        }else{
+            pointPos = i;
+        }
+        
+        cout<<pointPos<<endl;
         glm::vec2 orientInfo = calculateAlfa(movingHeadsL[i].getPosition(), points[pointPos], 0);
         float tilt = orientInfo.x;
         float pan = orientInfo.y;
         //            if(pan < 0){
         //                tilt = - tilt;
         //            }
-        pan = pan+90;
+        //pan = pan+90;
         //            if(i == 0) ofLog() << "Pan:" << pan << " Tilt:" << tilt;
-        tempPans[i] = ofMap(pan, 0, 180, 0, 1, true);
-        tempTilts[i] = ofMap(tilt, 45, -90, 0, 1, true);
+        tempPans[i] = -pan;
+        tempTilts[i] = 90-tilt;
     }
     panL = tempPans;
     tiltL = tempTilts;
     for(int i = 0; i < movingHeadsR.size(); i++){
-        int pointPos = i / (32 / points.size());
-        glm::vec2 orientInfo = calculateAlfa(movingHeadsR[i].getPosition(), points[pointPos], 1);
+        int pointPos = 0;
+        if(points.size() <= 5){
+            pointPos = floor((i+0.5) / (5.0 / points.size()));
+        }else{
+            pointPos = (i+5) % points.size();
+        }
+        cout<<pointPos<<endl;
+
+        
+        glm::vec2 orientInfo = calculateAlfa(movingHeadsR[i].getPosition(), points[pointPos], 0);
         float tilt = orientInfo.x;
         float pan = orientInfo.y;
         //            if(pan < 0){
         //                tilt = - tilt;
         //            }
-        pan = pan+90;
-        tempPans[i] = ofMap(pan, 0, 180, 0, 1, true);
-        tempTilts[i] = ofMap(tilt, 45, -90, 0, 1, true);
+        //pan = pan+90;
+        tempPans[i] = pan-180;
+        tempTilts[i] = tilt-90;
     }
+    cout<<"---------------------"<<endl;
     panR = tempPans;
     tiltR = tempTilts;
 //        ofLog() << calculateAlfa(movingHeadsL[0].getPosition(), points[0], 0);

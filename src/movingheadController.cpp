@@ -8,7 +8,7 @@
 #include "movingheadController.h"
 
 movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindow("Movinghead Controller"){
-    numGroups = 4;
+    numGroups = 2;
     size.resize(numGroups);
     intensity.resize(numGroups);
     pan.resize(numGroups);
@@ -25,11 +25,11 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
         parameters->add(intensity[i].set("Intensity " + ofToString(i), {0}, {0}, {1}));
         parameters->add(pan[i].set("Pan " + ofToString(i), {0}, {-180}, {180}));
         parameters->add(tilt[i].set("Tilt " + ofToString(i), {0}, {-180}, {180}));
-        parameters->add(createDropdownAbstractParameter("Color " + ofToString(i), {"White", "Deep Red", "Deep Blue", "Yellow", "Green", "Magenta", "Azure", "Red", "Dark Green", "Amber", "Blue", "Orange", "CTO", "UV filter"}, colorDropdown[i]));
+        parameters->add(createDropdownAbstractParameter("Color " + ofToString(i), {"White", "Red", "Orange", "Yellow", "Green-Blue", "Amber", "Blue Sky", "Green", "UV", "Light Red", "Magenta", "Dark Green", "Dark Yellow", "Blue"}, colorDropdown[i]));
         parameters->add(colorwheel[i].set("Color " + ofToString(i), {0}, {0}, {colorDropdown[i].getMax()}));
-        parameters->add(strobe[i].set("Strobe " + ofToString(i), 0, 0, 1));
+        parameters->add(strobe[i].set("Zoom " + ofToString(i), 0, 0, 1));
         parameters->add(gobo[i].set("Gobo " + ofToString(i), 0, 0, 1));
-        parameters->add(frost[i].set("Frost " + ofToString(i), 0, 0, 1));
+        parameters->add(frost[i].set("Focus " + ofToString(i), 0, 0, 1));
         
         dropdownListeners.push(colorDropdown[i].newListener([this, i](int &ind){
             colorwheel[i] = vector<int>(1, ind);
@@ -79,7 +79,7 @@ void movingheadController::saveCalibration(){
 }
 
 void movingheadController::update(ofEventArgs &a){
-    int nChannels = 24;
+    int nChannels = 16;
     
     vector<vector<float>> dmxInfo;
     vector<float> panInfo;
@@ -117,26 +117,30 @@ void movingheadController::update(ofEventArgs &a){
             dmxInfo[index][3] = tiltAtIndex*255 - int(tiltAtIndex*255);
             
             //pan/tilt speed
-            dmxInfo[index][4] = 1/255;
+            dmxInfo[index][4] = 0;
             
-            //color wheel
-            dmxInfo[index][6] = ofMap(getValueAtIndex(colorwheel[i].get(), j), colorwheel[i].getMin()[0], colorwheel[i].getMax()[0]-1, 128.0/255.0, 186/255.0, true);
-            
-            
-            //gobo
-            dmxInfo[index][9] = ofMap(gobo[i], 0, 1, 0, 87/255);
-            
-            //frost
-            dmxInfo[index][15] = ofMap(frost[i], 0, 1, 0, 180/255);
-            
-            //strobe
-            dmxInfo[index][21] = ofMap(strobe[i], 0, 1, 64/255, 96/255);
-            
+            dmxInfo[index][5] = 1; //Shutter open
             
             //dimmer
             float dimmerAtIndex = getValueAtIndex(intensity[i].get(), j) * masterFader;
-            dmxInfo[index][22] = dimmerAtIndex;
-            dmxInfo[index][23] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
+            dmxInfo[index][6] = dimmerAtIndex;
+            //dmxInfo[index][23] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
+            
+            //color wheel
+            dmxInfo[index][7] = ofMap(getValueAtIndex(colorwheel[i].get(), j), colorwheel[i].getMin()[0], colorwheel[i].getMax()[0]-1, 0, 27.0/255.0, true);
+            
+            
+            //gobo
+            dmxInfo[index][10] = ofMap(gobo[i], 0, 1, 0, 48.0/255.0);
+            
+            //frost
+            dmxInfo[index][13] = ofMap(frost[i], 0, 1, 0, 1);
+            
+            //strobe
+            dmxInfo[index][14] = ofMap(strobe[i], 0, 1, 0, 1);
+            
+            
+            
             
             ofColor colorValue;
             switch (int(getValueAtIndex(colorwheel[i].get(), j))) {
@@ -144,43 +148,43 @@ void movingheadController::update(ofEventArgs &a){
                     colorValue = ofColor::white;
                     break;
                 case 1:
-                    colorValue = ofColor::darkRed;
+                    colorValue = ofColor::red;
                     break;
                 case 2:
-                    colorValue = ofColor::darkBlue;
+                    colorValue = ofColor::orange;
                     break;
                 case 3:
                     colorValue = ofColor::yellow;
                     break;
                 case 4:
-                    colorValue = ofColor::green;
+                    colorValue = ofColor::blueViolet;
                     break;
                 case 5:
-                    colorValue = ofColor::magenta;
-                    break;
-                case 6:
-                    colorValue = ofColor::azure;
-                    break;
-                case 7:
-                    colorValue = ofColor::red;
-                    break;
-                case 8:
-                    colorValue = ofColor::darkGreen;
-                    break;
-                case 9:
                     colorValue = ofColor(231, 194, 81);
                     break;
+                case 6:
+                    colorValue = ofColor::skyBlue;
+                    break;
+                case 7:
+                    colorValue = ofColor::green;
+                    break;
+                case 8:
+                    colorValue = ofColor(46, 48, 89);
+                    break;
+                case 9:
+                    colorValue = ofColor::paleVioletRed;
+                    break;
                 case 10:
-                    colorValue = ofColor::blue;
+                    colorValue = ofColor::magenta;
                     break;
                 case 11:
-                    colorValue = ofColor::orange;
+                    colorValue = ofColor::darkGreen;
                     break;
                 case 12:
-                    colorValue = ofColor(246, 230, 199);
+                    colorValue = ofColor::greenYellow;
                     break;
                 case 13:
-                    colorValue = ofColor(46, 48, 89);
+                    colorValue = ofColor::blue;
                     break;
                     
                     
@@ -188,6 +192,7 @@ void movingheadController::update(ofEventArgs &a){
                     colorValue = ofColor::white;
                     break;
             }
+            
             colorInfo[index*3] = float(colorValue[0]) / 255.0 * dimmerAtIndex;
             colorInfo[(index*3)+1] = float(colorValue[1]) / 255.0 * dimmerAtIndex;
             colorInfo[(index*3)+2] = float(colorValue[2]) / 255.0 * dimmerAtIndex;
@@ -195,8 +200,8 @@ void movingheadController::update(ofEventArgs &a){
     }
     
     vector<float> tempOutput(dmxInfo.size()*nChannels);
-    for(int i = 0; i < dmxInfo.size()*3; i++){
-        tempOutput[i] = dmxInfo[i/3][i%3];
+    for(int i = 0; i < dmxInfo.size()*16; i++){
+        tempOutput[i] = dmxInfo[i/16][i%16];
     }
     dmxOutput = tempOutput;
     panOutput = panInfo;

@@ -1,0 +1,50 @@
+
+this.addFloatParameter("Pan", 127, 0, 255);
+this.addFloatParameter("PanFine", 0, 0, 255);
+this.addFloatParameter("Tilt", 127, 0, 255);
+this.addFloatParameter("TiltFine", 0, 0, 255);
+this.addFloatParameter("Speed", 0, 0, 255);
+this.addFloatParameter("Shutter", 255, 0, 255);
+this.addFloatParameter("Dimmer", 255, 0, 255);
+this.addFloatParameter("Color", 0, 0, 255);
+this.addFloatParameter("Rot Gobo", 0, 0, 255);
+this.addFloatParameter("Gobo Rot", 0, 0, 255);
+this.addFloatParameter("Fixed Gobo", 0, 0, 255);
+this.addFloatParameter("Prism", 0, 0, 255);
+this.addFloatParameter("Prism Rot", 0, 0, 255);
+this.addFloatParameter("Focus", 0, 0, 255);
+this.addFloatParameter("Zoom", 0, 0, 255);
+this.addFloatParameter("Control", 0, 0, 255);
+this.addVectorFloatParameter("Output", [0], [0], [1]);
+
+def listenerFunc(){
+  if(this.getLastChangedParameterName() != "Output"){
+    var vec = [this.getFloatParameter("Pan"),
+    this.getFloatParameter("PanFine"),
+    this.getFloatParameter("Tilt"),
+    this.getFloatParameter("TiltFine"),
+    this.getFloatParameter("Speed"),
+    this.getFloatParameter("Shutter"),
+    this.getFloatParameter("Dimmer"),
+    this.getFloatParameter("Color"),
+    this.getFloatParameter("Rot Gobo"),
+    this.getFloatParameter("Gobo Rot"),
+    this.getFloatParameter("Fixed Gobo"),
+    this.getFloatParameter("Prism"),
+    this.getFloatParameter("Prism Rot"),
+    this.getFloatParameter("Focus"),
+    this.getFloatParameter("Zoom"),
+    this.getFloatParameter("Control")]
+    this.setVectorFloatParameter("Output", vec);
+  }
+  return true;
+}
+
+def presetLoad(){
+  var vec = [this.getFloatParameter("In1"),
+    this.getFloatParameter("In2"),
+    this.getFloatParameter("In3"),
+    this.getFloatParameter("In4")]
+    this.setVectorFloatParameter("Output", vec);
+  return true;
+}

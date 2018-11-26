@@ -16,7 +16,9 @@ public:
     oscReceiver() : ofxOceanodeNodeModel("Osc Receiver"){
         receiver = nullptr;
     };
-    ~oscReceiver(){};
+    ~oscReceiver(){
+        delete oscReceiver;
+    };
     
     void setup() override;
     void update(ofEventArgs &a) override;
@@ -35,16 +37,20 @@ private:
     int movHeadsInputs;
     
     ofParameter<string> port;
-    vector<ofParameter<float>> sizes;
-    vector<ofParameter<vector<float>>> pans;
-    vector<ofParameter<vector<float>>> tilts;
-    vector<ofParameter<vector<float>>> intensities;
-    vector<ofParameter<vector<float>>> colors;
-    
-    vector<vector<float>> pansStore;
-    vector<vector<float>> tiltsStore;
-    vector<vector<float>> intensitiesStore;
-    vector<vector<float>> colorsStore;
+    ofParameter<int> size;
+//    vector<ofParameter<vector<float>>> pans;
+//    vector<ofParameter<vector<float>>> tilts;
+//    vector<ofParameter<vector<float>>> intensities;
+//    vector<ofParameter<vector<float>>> colors;
+//
+//    vector<vector<float>> pansStore;
+//    vector<vector<float>> tiltsStore;
+//    vector<vector<float>> intensitiesStore;
+//    vector<vector<float>> colorsStore;
+    ofParameter<vector<float>> x;
+    ofParameter<vector<float>> y;
+    vector<float> xStore;
+    vector<float> yStore;
     
     ofxOscReceiver* receiver;
 };
