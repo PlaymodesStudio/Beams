@@ -25,7 +25,7 @@ public:
         listener = inputSelector.newListener([this](vector<int> &v){
             int size = max(max(input0->size(), input1->size()), max(input2->size(), v.size()));
             vector<float> tempOutput(size);
-            for(int i = 0; i < v.size(); i++){
+            for(int i = 0; i < size; i++){
                 switch (getValueForIndex(inputSelector.get(), i)){
                     case 0:
                         tempOutput[i] = getValueForIndex(input0.get(), i);
