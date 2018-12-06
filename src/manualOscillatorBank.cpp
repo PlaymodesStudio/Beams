@@ -17,12 +17,19 @@ manualOscillatorBank::manualOscillatorBank() : baseIndexer(100, "Manual Oscillat
     parameters->add(dampingPow.set("Damping Pow", 0, -40, 40));
     parameters->add(output.set("Output", {0}, {0}, {1}));
     
-    phasorIn.addListener(this, &manualOscillatorBank::computeValues);
+    phasorInEvent = phasorIn.newListener(this, &manualOscillatorBank::computeValues);
     
     bufferIndex = 0;
     oldPhasor = 0;
     bufferOverflow = 0;
 }
+
+void manualOscillatorBank::presetRecallBeforeSettingParameters(ofJson &json){
+    if(json.count("Size") == 1){
+        parameters->getInt("Size") = ofToInt(json["Size"]);
+    }
+}
+
 
 void manualOscillatorBank::computeValues(float &f){
     if(oldPhasor > f) bufferOverflow++;

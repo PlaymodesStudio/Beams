@@ -22,6 +22,7 @@
 #include "vectorSwitcher.h"
 #include "oscSender.h"
 #include "oscReceiver.h"
+#include "sequentialAnalyzer.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -55,6 +56,7 @@ void ofApp::setup(){
     reg->registerModel<vectorSwitcher>("Vector Operations");
     reg->registerModel<oscSender>("OSC");
     reg->registerModel<oscReceiver>("OSC");
+    reg->registerModel<sequentialAnalyzer>("Modifiers");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
