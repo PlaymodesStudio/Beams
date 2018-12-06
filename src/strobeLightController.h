@@ -18,6 +18,13 @@ public:
     void setup() override;
     void update(ofEventArgs &e) override;
     
+    void presetHasLoaded() override {
+        red = {0};
+        green = {0};
+        blue = {0};
+        fader = {0};
+    };
+    
 private:
     
     ofParameter<int> numElements;
