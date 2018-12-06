@@ -58,9 +58,12 @@ void midiGateIn::newMidiMessage(ofxMidiMessage &eventArgs){
 }
 
 void midiGateIn::midiDeviceListener(int &device){
+    outputStore = vector<float>(noteOnEnd - noteOnStart + 1, 0);
     midiIn.closePort();
-    midiIn.openPort(device);
-    midiIn.addListener(this);
+    if(device > 0){
+        midiIn.openPort(device-1);
+        midiIn.addListener(this);
+    }
 }
 
 void midiGateIn::noteRangeChanged(int &note){
