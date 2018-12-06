@@ -16,10 +16,12 @@ public:
     manualOscillatorBank();
     ~manualOscillatorBank(){};
     
+    void presetRecallBeforeSettingParameters(ofJson &json) override;
     
 private:
     void computeValues(float &f);
     
+    ofEventListener phasorInEvent;
     
     ofParameter<float>  manualInput;
     deque<float>        buffer;
