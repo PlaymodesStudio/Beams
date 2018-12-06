@@ -15,7 +15,10 @@
 class midiGateIn : public ofxOceanodeNodeModel, ofxMidiListener {
 public:
     midiGateIn();
-    ~midiGateIn(){};
+    ~midiGateIn(){
+        if(midiIn != nullptr)
+            delete midiIn;
+    };
     
     void setup() override;
     void update(ofEventArgs &e) override;
@@ -34,7 +37,7 @@ private:
     
     ofParameter<vector<float>> output;
     
-    ofxMidiIn   midiIn;
+    ofxMidiIn*   midiIn;
     vector<float>   outputStore;
     ofMutex mutex;
 };
