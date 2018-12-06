@@ -9,14 +9,16 @@
 #include "midiGateIn.h"
 
 midiGateIn::midiGateIn() : ofxOceanodeNodeModel("Midi Note In"){
-    
+    midiIn = nullptr;
 }
 
 void midiGateIn::setup(){
+    midiIn = new ofxMidiIn();
+    
     vector<string> ports = {"None"};
-    ports.resize(1+midiIn.getNumInPorts());
-    for(int i = 0; i < midiIn.getNumInPorts(); i++){
-        ports[i+1] = midiIn.getInPortList()[i];
+    ports.resize(1+midiIn->getNumInPorts());
+    for(int i = 0; i < midiIn->getNumInPorts(); i++){
+        ports[i+1] = midiIn->getInPortList()[i];
     }
     parameters->add(createDropdownAbstractParameter("Midi Device", ports, midiDevice));
     parameters->add(midiChannel.set("Midi Channel", 0, 0, 16));
@@ -59,10 +61,10 @@ void midiGateIn::newMidiMessage(ofxMidiMessage &eventArgs){
 
 void midiGateIn::midiDeviceListener(int &device){
     outputStore = vector<float>(noteOnEnd - noteOnStart + 1, 0);
-    midiIn.closePort();
+    midiIn->closePort();
     if(device > 0){
-        midiIn.openPort(device-1);
-        midiIn.addListener(this);
+        midiIn->openPort(device-1);
+        midiIn->addListener(this);
     }
 }
 
