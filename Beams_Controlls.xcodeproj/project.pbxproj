@@ -75,6 +75,7 @@
 		9BD777923C7E370A961526AC /* envelopeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4655B54F461ED6D3FD64F179 /* envelopeGenerator.cpp */; };
 		9ECB03F755B67656BA19F9E7 /* movingheadController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06AED0B10BF5278780F9CC6 /* movingheadController.cpp */; };
 		9F35B157219F1FB900B1D896 /* oscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F35B155219F1FB800B1D896 /* oscReceiver.cpp */; };
+		9FB3120B21B1B7EE00D19DBB /* sequentialAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB3120921B1B7EE00D19DBB /* sequentialAnalyzer.cpp */; };
 		9FB8AE6ABDA40CD0274A29BA /* oscillatorTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 123BA4F448ED422A2D4B94DC /* oscillatorTexture.cpp */; };
 		A7F232028F646FE8E4DFD621 /* ArtNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D6C050337BF5E7D15F7C63 /* ArtNode.cpp */; };
 		AA12BB979460264F7478443E /* valueEaser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D00378236FD73D5D8CF8C990 /* valueEaser.cpp */; };
@@ -294,6 +295,8 @@
 		9F35B156219F1FB900B1D896 /* oscReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oscReceiver.h; sourceTree = "<group>"; };
 		9F7986DC4EB05E75FCE2C777 /* ofxOscSender.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxOscSender.h; path = ../../../addons/ofxOsc/src/ofxOscSender.h; sourceTree = SOURCE_ROOT; };
 		9FA2A0B2E964C498EBE3ACF4 /* oscillatorFragShader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = oscillatorFragShader.h; path = "src/ofxOceanode_modules-texture/oscillatorFragShader.h"; sourceTree = SOURCE_ROOT; };
+		9FB3120921B1B7EE00D19DBB /* sequentialAnalyzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sequentialAnalyzer.cpp; sourceTree = "<group>"; };
+		9FB3120A21B1B7EE00D19DBB /* sequentialAnalyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sequentialAnalyzer.h; sourceTree = "<group>"; };
 		A13853A1B21F20177F44EE37 /* ofxDatGuiLabel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDatGuiLabel.h; path = ../../../addons/ofxDatGui_PM/src/components/ofxDatGuiLabel.h; sourceTree = SOURCE_ROOT; };
 		A2A156C2D14C4F39566F9478 /* exception_specification.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = exception_specification.hpp; path = "src/ofxOceanode_modules-scripting/chaiscript/dispatchkit/exception_specification.hpp"; sourceTree = SOURCE_ROOT; };
 		A2AAA8CA403479E6FCDF920E /* OscHostEndianness.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OscHostEndianness.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscHostEndianness.h; sourceTree = SOURCE_ROOT; };
@@ -1500,6 +1503,7 @@
 				277A58779F7532303A3200C1 /* followPoint.cpp */,
 				0C0B0BB7496A80AFCE204CCF /* colorGradient.h */,
 				8E9B48876293CC6BC2E388FE /* pantiltEditor.h */,
+				1E3F6A26CE0117CBDD3D552F /* envelopeGenerator.h */,
 				4655B54F461ED6D3FD64F179 /* envelopeGenerator.cpp */,
 				D00378236FD73D5D8CF8C990 /* valueEaser.cpp */,
 				C3B9337D482EAB38599A5E65 /* midiGateIn.h */,
@@ -1511,7 +1515,6 @@
 				92484E0FFB74C2DA2799AA20 /* colorGradient.cpp */,
 				382A46E8952EBD382834A5A4 /* midiGateIn.cpp */,
 				55BED20F7D5F3CD60B4B8564 /* pantiltEditor.cpp */,
-				1E3F6A26CE0117CBDD3D552F /* envelopeGenerator.h */,
 				F59D07ED95E052917EB11E47 /* vectorPresetEaser.h */,
 				1E1C7958158507C8E0587493 /* strobeLightController.cpp */,
 				11983BC9563DFD6825F21C55 /* audioEngineController.cpp */,
@@ -1528,6 +1531,8 @@
 				C2115534DAA5A686652FE55B /* ofxOceanode_modules-artnet */,
 				9F35B155219F1FB800B1D896 /* oscReceiver.cpp */,
 				9F35B156219F1FB900B1D896 /* oscReceiver.h */,
+				9FB3120921B1B7EE00D19DBB /* sequentialAnalyzer.cpp */,
+				9FB3120A21B1B7EE00D19DBB /* sequentialAnalyzer.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1732,6 +1737,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				9FB3120B21B1B7EE00D19DBB /* sequentialAnalyzer.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				B0745EB76B22D63FD74500A4 /* vectorPresetEaser.cpp in Sources */,
 				6EE384C13C514F47DA1CA235 /* manualOscillatorBank.cpp in Sources */,
