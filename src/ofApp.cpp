@@ -68,7 +68,7 @@ void ofApp::setup(){
     controls = make_unique<ofxOceanodeControls>(container);
     controls->get<ofxOceanodeBPMController>()->setBPM(120 );
     
-    //container->loadPersistent();
+    container->loadPersistent();
 }
 
 //--------------------------------------------------------------
