@@ -21,13 +21,13 @@ void followPoint::setup(){
     
     movingHeadsL.resize(5);
     for(int i = 0; i < movingHeadsL.size(); i++){
-        movingHeadsL[i].setPosition(-19.54567, 23.22634, -45 + (22.5*i));
+        movingHeadsL[i].setPosition(-19.54567, 11.82634, -45 + (22.5*i));
         movingHeadsL[i].setScale(.1);
     }
     
     movingHeadsR.resize(5);
     for(int i = 0; i < movingHeadsL.size(); i++){
-        movingHeadsR[i].setPosition(19.54567, 23.22634, -45 + (22.5*i));
+        movingHeadsR[i].setPosition(19.54567, 11.82634, -45 + (22.5*i));
         movingHeadsR[i].setScale(.1);
     }
     
@@ -70,7 +70,7 @@ void followPoint::update(ofEventArgs &a){
             pointPos = i;
         }
         
-        cout<<pointPos<<endl;
+        //cout<<pointPos<<endl;
         glm::vec2 orientInfo = calculateAlfa(movingHeadsL[i].getPosition(), points[pointPos], 0);
         float tilt = orientInfo.x;
         float pan = orientInfo.y;
@@ -91,7 +91,7 @@ void followPoint::update(ofEventArgs &a){
         }else{
             pointPos = (i+5) % points.size();
         }
-        cout<<pointPos<<endl;
+        //cout<<pointPos<<endl;
 
         
         glm::vec2 orientInfo = calculateAlfa(movingHeadsR[i].getPosition(), points[pointPos], 0);
@@ -104,7 +104,7 @@ void followPoint::update(ofEventArgs &a){
         tempPans[i] = pan-180;
         tempTilts[i] = tilt-90;
     }
-    cout<<"---------------------"<<endl;
+    //cout<<"---------------------"<<endl;
     panR = tempPans;
     tiltR = tempTilts;
 //        ofLog() << calculateAlfa(movingHeadsL[0].getPosition(), points[0], 0);
@@ -197,7 +197,7 @@ glm::vec2 followPoint::calculateAlfa(glm::vec3 position, glm::vec3 lookAT, bool 
     
     if(orientMode==0)
     {
-        result.y = -ofRadToDeg(asin(myVector.z/R1));
+        result.y = -ofRadToDeg(asin((myVector.z/R1)));
         result.x = ofRadToDeg(asin(-myVector.y/R2));
     }
     else
