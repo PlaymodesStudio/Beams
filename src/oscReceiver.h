@@ -17,7 +17,7 @@ public:
         receiver = nullptr;
     };
     ~oscReceiver(){
-        delete oscReceiver;
+        delete receiver;
     };
     
     void setup() override;
