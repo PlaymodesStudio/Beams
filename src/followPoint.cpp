@@ -9,7 +9,7 @@
 
 void followPoint::setup(){
     parameters->add(pointsX.set("Points X", {0}, {-22.5}, {22.5}));
-    parameters->add(pointsY.set("Points Y", {0}, {0}, {100}));
+    parameters->add(pointsY.set("Points Y", {0}, {-10}, {100}));
     parameters->add(pointsZ.set("Points Z", {0}, {-50}, {50}));
     parameters->add(sortPoints.set("Sort Points", false));
     parameters->add(snakeSort.set("Snake Sort", true));
