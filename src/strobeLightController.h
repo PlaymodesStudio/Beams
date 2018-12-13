@@ -18,9 +18,23 @@ public:
     void setup() override;
     void update(ofEventArgs &e) override;
     
+    void presetRecallBeforeSettingParameters(ofJson &json) override{
+        red = {0};
+        green = {0};
+        blue = {0};
+        fader = {0};
+    }
+    
+    void presetHasLoaded() override {
+        
+    };
+    
 private:
+    void rgbToRgbw(float &r, float &g, float &b, float &w, bool clamp = false);
     
     ofParameter<int> numElements;
+    ofParameter<int> lightType;
+    ofParameter<bool> enableWhite;
     ofParameter<vector<float>> red;
     ofParameter<vector<float>> green;
     ofParameter<vector<float>> blue;
