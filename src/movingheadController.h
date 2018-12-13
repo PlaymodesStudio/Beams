@@ -40,6 +40,9 @@ private:
     void mousePressed(ofMouseEventArgs &a) override;
     void mouseReleased(ofMouseEventArgs &a) override;
     void mouseDragged(ofMouseEventArgs &a) override;
+    void showExternalWindow(bool &b);
+    
+    void recalculateSliders();
     
     template<typename T>
     float getValueAtIndex(const vector<T> &v, int index){
@@ -52,6 +55,7 @@ private:
     }
     
     ofEventListeners dropdownListeners;
+    ofEventListeners sizeListeners;
     
     int numGroups;
     vector<ofParameter<int>>    size;
@@ -69,11 +73,10 @@ private:
     ofParameter<vector<float>> tiltOutput;
     ofParameter<vector<float>> colorOutput;
     
-    vector<float> minPan;
-    vector<float> maxPan;
-    vector<float> minTilt;
-    vector<float> maxTilt;
+    int totalSize;
     
+    vector<float> panOffset;
+    vector<float> tiltOffset;
     
     float originalValue;
     vector<ofRectangle> points;

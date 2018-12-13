@@ -34,6 +34,12 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
         dropdownListeners.push(colorDropdown[i].newListener([this, i](int &ind){
             colorwheel[i] = vector<int>(1, ind);
         }));
+        sizeListeners.push(size[i].newListener([this](int &s){
+            totalSize = 0;
+            for(auto s : size) totalSize += s;
+            loadCalibration();
+            recalculateSliders();
+        }));
     }
     ofParameter<char> label;
     parameters->add(label.set("Shared", ' '));
@@ -44,38 +50,35 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     addOutputParameterToGroupAndInfo(colorOutput.set("Color Output", {0}, {0}, {1}));
     
     
-    
-    
     indexClicked = -1;
-    points.resize(32);
     isHorizontal = true;
     
+    totalSize = 4;
     panRange = 540;
     tiltRange = 270;
 }
 
 void movingheadController::loadCalibration(){
-//    ofJson json = ofLoadJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json");
-//    if(!json.empty()){
-//        minPan = json["MinPan"].get<vector<float>>();
-//        maxPan = json["MaxPan"].get<vector<float>>();
-//        minTilt = json["MinTilt"].get<vector<float>>();
-//        maxTilt = json["MaxTilt"].get<vector<float>>();
-//    }else{
-//        minPan = vector<float>(32, 0.5);
-//        maxPan = vector<float>(32, 0.1667);
-//        minTilt = vector<float>(32, 1);
-//        maxTilt = vector<float>(32, 0.5);
-//    }
+    bool loaded = false;
+    ofJson json = ofLoadJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json");
+    if(!json.empty()){
+        if(json["size"].get<int>() == totalSize){
+            panOffset = json["panOffset"].get<vector<float>>();
+            tiltOffset = json["tiltOffset"].get<vector<float>>();
+            loaded = true;
+        }
+    }if(!loaded){
+        panOffset = vector<float>(totalSize, 0);
+        tiltOffset = vector<float>(totalSize, 0);
+    }
 }
 
 void movingheadController::saveCalibration(){
-//    ofJson json;
-//    json["MinPan"] = minPan;
-//    json["MaxPan"] = maxPan;
-//    json["MinTilt"] = minTilt;
-//    json["MaxTilt"] = maxTilt;
-//    ofSavePrettyJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json", json);
+    ofJson json;
+    json["size"] = totalSize;
+    json["panOffset"] = panOffset;
+    json["tiltOffset"] = tiltOffset;
+    ofSavePrettyJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json", json);
 }
 
 void movingheadController::update(ofEventArgs &a){
@@ -86,13 +89,10 @@ void movingheadController::update(ofEventArgs &a){
     vector<float> tiltInfo;
     vector<float> colorInfo;
     
-    int totalNum = 0;
-    for(auto s : size) totalNum += s;
-    
-    dmxInfo.resize(totalNum, vector<float>(nChannels, 0));
-    panInfo.resize(totalNum, .5);
-    tiltInfo.resize(totalNum, .5);
-    colorInfo.resize(totalNum*3, .5); //3 color components;
+    dmxInfo.resize(totalSize, vector<float>(nChannels, 0));
+    panInfo.resize(totalSize, .5);
+    tiltInfo.resize(totalSize, .5);
+    colorInfo.resize(totalSize*3, .5); //3 color components;
     
     for(int i = 0; i < numGroups; i++){
         int accumulateSizes = 0;
@@ -105,14 +105,14 @@ void movingheadController::update(ofEventArgs &a){
             //pan
             float panAtIndex = getValueAtIndex(pan[i].get(), j);
             panInfo[index] = panAtIndex;
-            panAtIndex = ofMap(panAtIndex, -panRange/2, panRange/2, 0, 1, true);
+            panAtIndex = ofMap(panAtIndex, -panRange/2 + panOffset[index], panRange/2 + panOffset[index], 0, 1, true);
             dmxInfo[index][0] = panAtIndex;
             dmxInfo[index][1] = panAtIndex*255 - int(panAtIndex*255);
             
             //tilt
             float tiltAtIndex = getValueAtIndex(tilt[i].get(), j);
             tiltInfo[index] = tiltAtIndex;
-            tiltAtIndex = ofMap(tiltAtIndex, -tiltRange/2, tiltRange/2, 0, 1, true);
+            tiltAtIndex = ofMap(tiltAtIndex, -tiltRange/2 + tiltOffset[index], tiltRange/2 + tiltOffset[index], 0, 1, true);
             dmxInfo[index][2] = tiltAtIndex;
             dmxInfo[index][3] = tiltAtIndex*255 - int(tiltAtIndex*255);
             
@@ -205,49 +205,67 @@ void movingheadController::update(ofEventArgs &a){
 }
 
 void movingheadController::drawInExternalWindow(ofEventArgs &e){
-//    ofBackground(0);
-//    ofSetColor(255);
-//    for(int i = 0; i < points.size(); i++){
-//        auto &point = points[i];
-//        ofSetColor(255);
-//        ofDrawCircle(point.getCenter(), point.getWidth()/2);
-//        glm::vec3 numOffset = isHorizontal ? glm::vec3(-point.getWidth()/4, -point.getWidth()/2, 1) : glm::vec3(point.getWidth()/2, point.getWidth()/4, 1);
-//        ofDrawBitmapString(ofToString(i), point.getCenter() + numOffset);
-//        if(ofGetKeyPressed(OF_KEY_LEFT) || ofGetKeyPressed(OF_KEY_RIGHT)){
-//            ofPath path;
-//            path.setColor(ofColor::red);
-//            path.arc(point.getCenter(), point.getWidth()/1.5, point.getWidth()/1.5, 0, 270);
-////            path.moveTo(point.getCenter());
-//            path.draw();
-//        }else if(ofGetKeyPressed(OF_KEY_UP) || ofGetKeyPressed(OF_KEY_DOWN)){
-//            ofPath path;
-//            path.setColor(ofColor::red);
-//            path.arc(point.getCenter(), point.getWidth()/1.5, point.getWidth()/1.5, ofMap(minTilt[i], 0., 1., 140, 400), ofMap(maxTilt[i], 0., 1., 140, 400));
-//            path.draw();
-//        }
-//    }
+    ofBackground(0);
+    ofSetColor(255);
+    for(int i = 0; i < points.size(); i++){
+        auto &point = points[i];
+        ofSetColor(255);
+        ofNoFill();
+        ofDrawRectangle(point);
+        glm::vec3 numOffset = isHorizontal ? glm::vec3(0, -point.getHeight()/1.9, 1) : glm::vec3(point.getWidth()/1.9, 0, 1);
+        ofDrawBitmapString(ofToString(i), point.getCenter() + numOffset);
+        if(ofGetKeyPressed('p')){
+            ofDrawBitmapString(ofToString(panOffset[i]), point.getCenter());
+        }else if(ofGetKeyPressed('t')){
+            ofDrawBitmapString(ofToString(tiltOffset[i]), point.getCenter());
+        }
+        ofPushStyle();
+        ofSetColor(255, 127);
+        ofFill();
+        ofRectangle sliderVal;
+        float offset = 0;
+        if(ofGetKeyPressed('p')){
+            offset = -panOffset[i] * float(max(point.getWidth(), point.getHeight()))/2;
+        }else if(ofGetKeyPressed('t')){
+            offset = -tiltOffset[i] * float(max(point.getWidth(), point.getHeight()))/2;
+        }
+        if(isHorizontal)
+            sliderVal.setFromCenter(point.getCenter().x, point.getCenter().y + offset, point.getWidth(), 10);
+        else{
+            sliderVal.setFromCenter(point.getCenter().x + offset, point.getCenter().y, 10, point.getHeight());
+        }
+        ofDrawRectangle(sliderVal);
+        ofPopStyle();
+    }
+}
+
+void movingheadController::recalculateSliders(){
+    points.resize(totalSize);
+    if(externalWindowRect.width >= externalWindowRect.height){
+        isHorizontal = true;
+        int center = externalWindowRect.height/2;
+        float step = float(externalWindowRect.width) / float(totalSize);
+        float height = externalWindowRect.height / 1.2;
+        float width = externalWindowRect.width / (totalSize*2);
+        for(int i = 0; i < totalSize; i++){
+            int pos = (step*i) + step/2;
+            points[i].setFromCenter(pos, center, width, height);
+        }
+    }else{
+        isHorizontal = false;
+        int center = externalWindowRect.width/2;
+        float step = externalWindowRect.height / float(totalSize);
+        float height = externalWindowRect.height/(totalSize*2);
+        float width = externalWindowRect.width / 1.2;
+        for(int i = 0; i < totalSize; i++){
+            int pos = (step*i) + step/2;
+            points[i].setFromCenter(center, pos, width, height);
+        }
+    }
 }
 
 void movingheadController::windowResized(ofResizeEventArgs &a){
-//    if(externalWindowRect.width >= externalWindowRect.height){
-//        isHorizontal = true;
-//        int center = externalWindowRect.height/2;
-//        float step = float(externalWindowRect.width) / 32.0;
-//        float size = min(externalWindowRect.height / 2, externalWindowRect.width/(32*4));
-//        for(int i = 0; i < 32; i++){
-//            int pos = (step*i) + step/2;
-//            points[i].setFromCenter(pos, center, size*2, size*2);
-//        }
-//    }else{
-//        isHorizontal = false;
-//        int center = externalWindowRect.width/2;
-//        float step = externalWindowRect.height / 32.0;
-//        float size = min(externalWindowRect.width / 2, externalWindowRect.height/(32*4));
-//        for(int i = 0; i < 32; i++){
-//            int pos = (step*i) + step/2;
-//            points[i].setFromCenter(center, pos, size*2, size*2);
-//        }
-//    }
+    recalculateSliders();
 }
 
 void movingheadController::keyPressed(ofKeyEventArgs &a){
@@ -259,24 +277,20 @@ void movingheadController::keyReleased(ofKeyEventArgs &a){
 }
 
 void movingheadController::mousePressed(ofMouseEventArgs &a){
-//    if(ofGetKeyPressed()){
-//        for(int i = 0; i < points.size(); i++){
-//            if(points[i].inside(a)){
-//            indexClicked = i;
-//            break;
-//            }
-//        }
-//        if(ofGetKeyPressed(OF_KEY_LEFT)){
-//            originalValue = minPan[indexClicked];
-//        }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
-//            originalValue = maxPan[indexClicked];
-//        }else if(ofGetKeyPressed(OF_KEY_DOWN)){
-//            originalValue = minTilt[indexClicked];
-//        }else if(ofGetKeyPressed(OF_KEY_UP)){
-//            originalValue = maxTilt[indexClicked];
-//        }
-//        initialClicPos = a;
-//    }
+    if(ofGetKeyPressed()){
+        for(int i = 0; i < points.size(); i++){
+            if(points[i].inside(a)){
+            indexClicked = i;
+            break;
+            }
+        }
+        if(ofGetKeyPressed('p')){
+            originalValue = panOffset[indexClicked];
+        }else if(ofGetKeyPressed('t')){
+            originalValue = tiltOffset[indexClicked];
+        }
+        initialClicPos = a;
+    }
 }
 
 void movingheadController::mouseReleased(ofMouseEventArgs &a){
@@ -284,35 +298,31 @@ void movingheadController::mouseReleased(ofMouseEventArgs &a){
 }
 
 void movingheadController::mouseDragged(ofMouseEventArgs &a){
-//    if(indexClicked != -1){
-//        glm::vec2 amountMoved = a - initialClicPos;
-//        if(isHorizontal){
-//            float modVal = -amountMoved.y/(externalWindowRect.height/2);
-//            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
-//            if(ofGetKeyPressed(OF_KEY_LEFT)){
-//                minPan[indexClicked] = originalValue + modVal;
-//            }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
-//                maxPan[indexClicked] = originalValue + modVal;
-//            }else if(ofGetKeyPressed(OF_KEY_DOWN)){
-//                minTilt[indexClicked] = originalValue + modVal;
-//            }else if(ofGetKeyPressed(OF_KEY_UP)){
-//                maxTilt[indexClicked] = originalValue + modVal;
-//            }
-//            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(-amountMoved.y/(externalWindowRect.height/2), -1, 1) ;
-//        }else{
-//            float modVal = -amountMoved.x/(externalWindowRect.width/2);
-//            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
-//            if(ofGetKeyPressed(OF_KEY_LEFT)){
-//                minPan[indexClicked] = originalValue + modVal;
-//            }else if(ofGetKeyPressed(OF_KEY_RIGHT)){
-//                maxPan[indexClicked] = originalValue + modVal;
-//            }else if(ofGetKeyPressed(OF_KEY_DOWN)){
-//                minTilt[indexClicked] = originalValue + modVal;
-//            }else if(ofGetKeyPressed(OF_KEY_UP)){
-//                maxTilt[indexClicked] = originalValue + modVal;
-//            }
-//            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(amountMoved.x /(externalWindowRect.width/2), -1, 1);
-//        }
-//    }
+    if(indexClicked != -1){
+        glm::vec2 amountMoved = a - initialClicPos;
+        if(isHorizontal){
+            float modVal = -amountMoved.y/(externalWindowRect.height/2);
+            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
+            if(ofGetKeyPressed('p')){
+                panOffset[indexClicked] = originalValue + modVal;
+            }else if(ofGetKeyPressed('t')){
+                tiltOffset[indexClicked] = originalValue + modVal;
+            }
+            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(-amountMoved.y/(externalWindowRect.height/2), -1, 1) ;
+        }else{
+            float modVal = -amountMoved.x/(externalWindowRect.width/2);
+            if(ofGetKeyPressed(OF_KEY_SHIFT)) modVal /= 2;
+            if(ofGetKeyPressed('p')){
+                panOffset[indexClicked] = originalValue + modVal;
+            }else if(ofGetKeyPressed('t')){
+                tiltOffset[indexClicked] = originalValue + modVal;
+            }
+            ofLog() <<"Index: " << indexClicked << " Amount: "<< ofClamp(amountMoved.x /(externalWindowRect.width/2), -1, 1);
+        }
+    }
 }
 
+void movingheadController::showExternalWindow(bool &b){
+    ofxOceanodeNodeModelExternalWindow::showExternalWindow(b);
+    recalculateSliders();
+}
