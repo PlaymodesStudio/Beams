@@ -94,36 +94,36 @@ void oscReceiver::update(ofEventArgs &a){
                     colorsStore[movGroup][idInGroup] = m.getArgAsFloat(0);
                 }
             }
-            else if(splitAddress[0] == "wash"){
+            if(splitAddress[0] == "wash"){
                 if(splitAddress[2] == "color"){
-                    if(!(colorsStore[movHeadsInputs].size() > id)){
-                        colorsStore[movHeadsInputs].resize(id);
-                        colorsStore[movHeadsInputs+1].resize(id);
-                        colorsStore[movHeadsInputs+2].resize(id);
+                    if((colorsStore[movHeadsInputs].size() <= id)){
+                        colorsStore[movHeadsInputs].resize(id+1);
+                        colorsStore[movHeadsInputs+1].resize(id+1);
+                        colorsStore[movHeadsInputs+2].resize(id+1);
                     }
                     colorsStore[movHeadsInputs][id] = m.getArgAsFloat(0);
                     colorsStore[movHeadsInputs + 1][id] = m.getArgAsFloat(1);
                     colorsStore[movHeadsInputs + 2][id] = m.getArgAsFloat(2);
                 }
             }
-            else if(splitAddress[0] == "panL"){
+            else if(splitAddress[0] == "parL"){
                 if(splitAddress[2] == "color"){
-                    if(!(colorsStore[movHeadsInputs + 3].size() > id)){
-                        colorsStore[movHeadsInputs+3].resize(id);
-                        colorsStore[movHeadsInputs+4].resize(id);
-                        colorsStore[movHeadsInputs+5].resize(id);
+                    if((colorsStore[movHeadsInputs + 3].size() <= id)){
+                        colorsStore[movHeadsInputs+3].resize(id+1);
+                        colorsStore[movHeadsInputs+4].resize(id+1);
+                        colorsStore[movHeadsInputs+5].resize(id+1);
                     }
                     colorsStore[movHeadsInputs + 3][id] = m.getArgAsFloat(0);
                     colorsStore[movHeadsInputs + 4][id] = m.getArgAsFloat(1);
                     colorsStore[movHeadsInputs + 5][id] = m.getArgAsFloat(2);
                 }
             }
-            else if(splitAddress[0] == "panR"){
+            else if(splitAddress[0] == "parR"){
                 if(splitAddress[2] == "color"){
-                    if(!(colorsStore[movHeadsInputs + 6].size() > id)){
-                        colorsStore[movHeadsInputs+6].resize(id);
-                        colorsStore[movHeadsInputs+7].resize(id);
-                        colorsStore[movHeadsInputs+8].resize(id);
+                    if((colorsStore[movHeadsInputs + 6].size() <= id)){
+                        colorsStore[movHeadsInputs+6].resize(id+1);
+                        colorsStore[movHeadsInputs+7].resize(id+1);
+                        colorsStore[movHeadsInputs+8].resize(id+1);
                     }
                     colorsStore[movHeadsInputs + 6][id] = m.getArgAsFloat(0);
                     colorsStore[movHeadsInputs + 7][id] = m.getArgAsFloat(1);

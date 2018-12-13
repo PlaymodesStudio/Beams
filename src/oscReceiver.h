@@ -16,7 +16,10 @@ public:
     oscReceiver() : ofxOceanodeNodeModel("Osc Receiver"){
         receiver = nullptr;
     };
-    ~oscReceiver(){};
+    ~oscReceiver(){
+        if(receiver != nullptr)
+            delete receiver;
+    };
     
     void setup() override;
     void update(ofEventArgs &a) override;

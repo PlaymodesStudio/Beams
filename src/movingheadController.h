@@ -27,6 +27,10 @@ public:
     
     void update(ofEventArgs &a) override;
     
+    void presetRecallBeforeSettingParameters(ofJson &json) override{
+        for(auto &i : intensity) i = {0};
+    };
+    
 private:
     
     void saveCalibration();
