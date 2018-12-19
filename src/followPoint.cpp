@@ -101,8 +101,8 @@ void followPoint::update(ofEventArgs &a){
         //                tilt = - tilt;
         //            }
         //pan = pan+90;
-        tempPans[i] = pan-180;
-        tempTilts[i] = tilt-90;
+        tempPans[i] = pan;
+        tempTilts[i] = 90-tilt;
     }
     //cout<<"---------------------"<<endl;
     panR = tempPans;
