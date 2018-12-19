@@ -22,9 +22,12 @@ void oscReceiver::setup(){
 //    colors.resize(movHeadsInputs+9);
 //    colorsStore.resize(movHeadsInputs+9);
 //    
-        parameters->add(size.set("Size", 1, 1, 100));
-        parameters->add(x.set("X", {0}, {-25}, {25}));
-        parameters->add(y.set("Z", {0}, {-50}, {50}));
+    parameters->add(size.set("Size", 1, 1, 100));
+    parameters->add(x.set("X", {0}, {-20}, {20}));
+    parameters->add(y.set("Z", {0}, {-50}, {50}));
+    parameters->add(bool1.set("Bool 1", {0}, {0}, {1}));
+    parameters->add(bool2.set("Bool 2", {0}, {0}, {1}));
+    parameters->add(bool3.set("Bool 3", {0}, {0}, {1}));
 //        parameters->add(intensities[i].set("Intensity " + ofToString(i), {0}, {0}, {1}));
 //        parameters->add(colors[i].set("Heads Color " + ofToString(i), {0}, {0}, {100}));
 //        listeners.push(sizes[i].newListener([this, i](int s){
@@ -58,11 +61,17 @@ void oscReceiver::setup(){
 //    }
     xStore = x;
     yStore = y;
+    bool1Store = bool1;
+    bool2Store = bool2;
+    bool3Store = bool3;
     
     listeners.push(port.newListener([this](string &s){setupReceiver();}));
     listeners.push(size.newListener([this](int &i){
         xStore.resize(i, 0);
         yStore.resize(i, 0);
+        bool1Store.resize(i, 0);
+        bool2Store.resize(i, 0);
+        bool3Store.resize(i, 0);
     }));
     
     setupReceiver();
@@ -76,15 +85,43 @@ void oscReceiver::update(ofEventArgs &a){
         vector<string> splitAddress = ofSplitString(m.getAddress(), "/");
         if(splitAddress[0].size() == 0) splitAddress.erase(splitAddress.begin());
         if(splitAddress.size() == 2){
-            int id = ofToInt(splitAddress[1])-1;
             if(splitAddress[0] == "point"){
+                int id = ofToInt(splitAddress[1])-1;
                 if(id <= size){
                     xStore[id] = ofMap(m.getArgAsFloat(0), 0, 1, x.getMin()[0], x.getMax()[0]);
                     yStore[id] = ofMap(m.getArgAsFloat(1), 1, 0, y.getMin()[0], y.getMax()[0]);
                 }
             }
+        }else if(splitAddress.size() == 4){
+            if(splitAddress[0] == "toggle"){
+                int id = ofToInt(splitAddress[1])-1;
+                if(id <= size){
+                    switch (ofToInt(splitAddress[2])-1) {
+                        case 0:
+                            bool1Store[id] = m.getArgAsBool(0);
+                            break;
+                        case 1:
+                            bool2Store[id] = m.getArgAsBool(0);
+                            break;
+                        case 2:
+                            bool3Store[id] = m.getArgAsBool(0);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            else if(splitAddress[0] == "config"){
+                if(splitAddress[1] == "num"){
+                    size = ofToInt(splitAddress[2]);
+                }
+                
+            }
         }
     }
     x = xStore;
     y = yStore;
+    bool1 = bool1Store;
+    bool2 = bool2Store;
+    bool3 = bool3Store;
 }

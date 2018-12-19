@@ -49,8 +49,14 @@ private:
 //    vector<vector<float>> colorsStore;
     ofParameter<vector<float>> x;
     ofParameter<vector<float>> y;
+    ofParameter<vector<float>> bool1;
+    ofParameter<vector<float>> bool2;
+    ofParameter<vector<float>> bool3;
     vector<float> xStore;
     vector<float> yStore;
+    vector<float> bool1Store;
+    vector<float> bool2Store;
+    vector<float> bool3Store;
     
     ofxOscReceiver* receiver;
 };
