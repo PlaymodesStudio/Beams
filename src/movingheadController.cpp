@@ -104,14 +104,14 @@ void movingheadController::update(ofEventArgs &a){
             
             //pan
             float panAtIndex = getValueAtIndex(pan[i].get(), j);
-            panInfo[index] = panAtIndex;
+            panInfo[index] = ofClamp(panAtIndex, -180, 180);
             panAtIndex = ofMap(panAtIndex, -panRange/2 + panOffset[index], panRange/2 + panOffset[index], 0, 1, true);
             dmxInfo[index][0] = panAtIndex;
             dmxInfo[index][1] = panAtIndex*255 - int(panAtIndex*255);
             
             //tilt
             float tiltAtIndex = getValueAtIndex(tilt[i].get(), j);
-            tiltInfo[index] = tiltAtIndex;
+            tiltInfo[index] = ofClamp(tiltAtIndex, -180, 180);
             tiltAtIndex = ofMap(tiltAtIndex, -tiltRange/2 + tiltOffset[index], tiltRange/2 + tiltOffset[index], 0, 1, true);
             dmxInfo[index][2] = tiltAtIndex;
             dmxInfo[index][3] = tiltAtIndex*255 - int(tiltAtIndex*255);
