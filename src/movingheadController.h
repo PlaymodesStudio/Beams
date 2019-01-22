@@ -68,10 +68,12 @@ private:
     vector<ofParameter<vector<float>>> intensity;
     vector<ofParameter<vector<int>>> colorwheel;
     vector<ofParameter<int>> colorDropdown;
-    vector<ofParameter<float>> strobe;
+    vector<ofParameter<float>> zoom;
     vector<ofParameter<float>> gobo;
+    vector<ofParameter<float>> focus;
     vector<ofParameter<float>> frost;
     ofParameter<float> masterFader;
+    ofParameter<bool> lampOn;
     ofParameter<vector<float>> dmxOutput;
     ofParameter<vector<float>> panOutput;
     ofParameter<vector<float>> tiltOutput;

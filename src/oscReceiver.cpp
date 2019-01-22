@@ -36,17 +36,17 @@ void oscReceiver::setup(){
         }));
     }
     
-    parameters->add(colors[movHeadsInputs].set("Wash R", {1}, {0}, {1}));
-    parameters->add(colors[movHeadsInputs+1].set("Wash G", {1}, {0}, {1}));
-    parameters->add(colors[movHeadsInputs+2].set("Wash B", {1}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs].set("Wash R", {0}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+1].set("Wash G", {0}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+2].set("Wash B", {0}, {0}, {1}));
     
-    parameters->add(colors[movHeadsInputs+3].set("ParL R", {1}, {0}, {1}));
-    parameters->add(colors[movHeadsInputs+4].set("ParL G", {1}, {0}, {1}));
-    parameters->add(colors[movHeadsInputs+5].set("ParL B", {1}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+3].set("ParL R", {0}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+4].set("ParL G", {0}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+5].set("ParL B", {0}, {0}, {1}));
     
-    parameters->add(colors[movHeadsInputs+6].set("ParR R", {1}, {0}, {1}));
-    parameters->add(colors[movHeadsInputs+7].set("ParR G", {1}, {0}, {1}));
-    parameters->add(colors[movHeadsInputs+8].set("ParR B", {1}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+6].set("ParR R", {0}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+7].set("ParR G", {0}, {0}, {1}));
+    parameters->add(colors[movHeadsInputs+8].set("ParR B", {0}, {0}, {1}));
     
     for(int i = 0; i < movHeadsInputs; i++){
         pansStore[i] = pans[i];

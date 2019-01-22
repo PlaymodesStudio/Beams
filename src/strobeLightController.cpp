@@ -8,9 +8,9 @@
 #include "strobeLightController.h"
 
 void strobeLightController::setup(){
-    parameters->add(lightType.set("Light Type", 0, 0, 1));
-    parameters->add(numElements.set("Num Elements", 4, 0, 1000));
-    parameters->add(enableWhite.set("Enable White", false));
+    addOutputParameterToGroupAndInfo(lightType.set("Light Type", 0, 0, 1));
+    addOutputParameterToGroupAndInfo(numElements.set("Num Elements", 4, 0, 1000));
+    addOutputParameterToGroupAndInfo(enableWhite.set("Enable White", false));
     parameters->add(red.set("Red", {1}, {0}, {1}));
     parameters->add(green.set("Green", {1}, {0}, {1}));
     parameters->add(blue.set("Blue", {1}, {0}, {1}));
@@ -19,8 +19,8 @@ void strobeLightController::setup(){
     parameters->add(strobeRate.set("Strobe Rate", {0}, {0}, {1}));
     parameters->add(strobeWidth.set("Pulse Width", {1}, {0}, {1}));
     parameters->add(masterFader.set("Master Fader", 1, 0, 1));
-    parameters->add(dmxOutput.set("Dmx Output", {0}, {0}, {1}));
-    parameters->add(colorOutput.set("Color Output", {0}, {0}, {1}));
+    addOutputParameterToGroupAndInfo(dmxOutput.set("Dmx Output", {0}, {0}, {1}));
+    addOutputParameterToGroupAndInfo(colorOutput.set("Color Output", {0}, {0}, {1}));
 }
 
 void strobeLightController::update(ofEventArgs &e){
@@ -63,6 +63,10 @@ void strobeLightController::update(ofEventArgs &e){
         tempColors[(i*3)] = red_;
         tempColors[(i*3)+1] = green_;
         tempColors[(i*3)+2] = blue_;
+        
+//        red_ = pow(red_, 5);
+//        green_ = pow(green_, 5);
+//        blue_ = pow(blue_, 5);
         
         switch (lightType) {
             case 0:
