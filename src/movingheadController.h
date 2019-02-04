@@ -77,6 +77,8 @@ private:
     int indexClicked;
     bool isHorizontal;
     glm::vec2 initialClicPos;
+    
+    int numHeads;
 };
 
 #endif /* movingheadController_h */
