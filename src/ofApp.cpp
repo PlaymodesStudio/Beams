@@ -23,6 +23,7 @@
 #include "oscSender.h"
 #include "oscReceiver.h"
 #include "sequentialAnalyzer.h"
+#include "followIndexsToMovingHeads.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -57,6 +58,7 @@ void ofApp::setup(){
     reg->registerModel<oscSender>("OSC");
     reg->registerModel<oscReceiver>("OSC");
     reg->registerModel<sequentialAnalyzer>("Modifiers");
+    reg->registerModel<followIndexsToMovingHeads>("MovingHeads");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
