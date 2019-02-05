@@ -88,7 +88,7 @@ void oscReceiver::update(ofEventArgs &a){
             if(splitAddress[0] == "point"){
                 int id = ofToInt(splitAddress[1])-1;
                 if(id <= size){
-                    xStore[id] = ofMap(m.getArgAsFloat(0), 0, 1, x.getMin()[0], x.getMax()[0]);
+                    xStore[id] = ofMap(m.getArgAsFloat(0), 1, 0, x.getMin()[0], x.getMax()[0]);
                     yStore[id] = ofMap(m.getArgAsFloat(1), 1, 0, y.getMin()[0], y.getMax()[0]);
                 }
             }
