@@ -44,6 +44,9 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     ofParameter<char> label;
     parameters->add(label.set("Shared", ' '));
     parameters->add(masterFader.set("Master Fader", 1, 0, 1));
+    addParameterToGroupAndInfo(lampOn.set("Lamp On", false));
+    addParameterToGroupAndInfo(lampOff.set("Lamp Off", false));
+    addParameterToGroupAndInfo(reset.set("Reset", false));
     addOutputParameterToGroupAndInfo(dmxOutput.set("Dmx Output", {0}, {0}, {1}));
     addOutputParameterToGroupAndInfo(panOutput.set("Pan Output", {0}, {-180}, {180}));
     addOutputParameterToGroupAndInfo(tiltOutput.set("Tilt Output", {0}, {-180}, {180}));
@@ -55,7 +58,7 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     
     totalSize = 4;
     panRange = 540;
-    tiltRange = 270;
+    tiltRange = 230;
 }
 
 void movingheadController::loadCalibration(){
@@ -105,7 +108,7 @@ void movingheadController::update(ofEventArgs &a){
             //pan
             float panAtIndex = getValueAtIndex(pan[i].get(), j);
             panInfo[index] = ofClamp(panAtIndex, -180, 180);
-            panAtIndex = ofMap(panAtIndex, -panRange/2 + panOffset[index], panRange/2 + panOffset[index], 0, 1, true);
+            panAtIndex = ofMap(panAtIndex+90, -panRange/2 + panOffset[index], panRange/2 + panOffset[index], 0, 1, true);
             dmxInfo[index][0] = panAtIndex;
             dmxInfo[index][1] = panAtIndex*255 - int(panAtIndex*255);
             
@@ -138,6 +141,16 @@ void movingheadController::update(ofEventArgs &a){
             
             //strobe
             dmxInfo[index][14] = ofMap(strobe[i], 0, 1, 0, 1);
+            
+            if(lampOn)
+                dmxInfo[index][15] = 84.0f/255.0f;
+            else if(lampOff){
+                dmxInfo[index][15] = 75.0f/255.0f;
+            }else if(reset){
+                dmxInfo[index][15] = 10.0f/255.0f;
+            }else{
+                dmxInfo[index][15] = 0;
+            }
             
             
             

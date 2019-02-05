@@ -72,6 +72,9 @@ private:
     ofParameter<vector<float>> panOutput;
     ofParameter<vector<float>> tiltOutput;
     ofParameter<vector<float>> colorOutput;
+    ofParameter<bool> lampOn;
+    ofParameter<bool> lampOff;
+    ofParameter<bool> reset;
     
     int totalSize;
     
