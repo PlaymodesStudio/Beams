@@ -19,14 +19,23 @@ manualOscillatorBank::manualOscillatorBank() : baseIndexer(100, "Manual Oscillat
     
     phasorInEvent = phasorIn.newListener(this, &manualOscillatorBank::computeValues);
     
+    manualInEvent = manualInput.newListener([this](float &f){
+        if(isFirstInput){
+            for(auto &p : indexedBuffer) p.second = f;
+            isFirstInput = false;
+        }
+    });
+    
     bufferIndex = 0;
     oldPhasor = 0;
     bufferOverflow = 0;
+    isFirstInput = true;
 }
 
 void manualOscillatorBank::presetRecallBeforeSettingParameters(ofJson &json){
     if(json.count("Size") == 1){
         parameters->getInt("Size") = ofToInt(json["Size"]);
+        isFirstInput = true;
     }
 }
 

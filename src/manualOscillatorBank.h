@@ -22,6 +22,7 @@ private:
     void computeValues(float &f);
     
     ofEventListener phasorInEvent;
+    ofEventListener manualInEvent;
     
     ofParameter<float>  manualInput;
     deque<float>        buffer;
@@ -33,6 +34,8 @@ private:
     ofParameter<float>  damping;
     ofParameter<float>  dampingPow;
     ofParameter<vector<float>>  output;
+    
+    bool isFirstInput;
 };
 
 #endif /* manualOscillatorBank_h */
