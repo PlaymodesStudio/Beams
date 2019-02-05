@@ -31,12 +31,16 @@ private:
     ofParameter<vector<float>> pointsY;
     ofParameter<vector<float>> pointsZ;
     ofParameter<bool> sortPoints;
-    ofParameter<bool> snakeSort;
+    ofParameter<bool> randomizePoints;
     
     ofParameter<vector<float>> panL;
     ofParameter<vector<float>> tiltL;
     ofParameter<vector<float>> panR;
     ofParameter<vector<float>> tiltR;
+    ofParameter<vector<int>> distribution;
+    
+    vector<int> randomDist;
+    ofEventListeners listeners;
     
     vector<glm::vec3> points;
     ofEasyCam cam;
@@ -44,6 +48,9 @@ private:
     vector<ofNode> movingHeadsL;
     vector<ofNode> movingHeadsR;
     ofRectangle limits;
+    
+    int lastSize;
+    bool lastRandomizePoints;
 };
 
 #endif /* followPoint_h */
