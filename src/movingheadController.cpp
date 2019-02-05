@@ -8,16 +8,22 @@
 #include "movingheadController.h"
 
 movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindow("Movinghead Controller"){
+    numHeads = 12;
+    
     parameters->add(intensity.set("Intensity", {0}, {0}, {1}));
     parameters->add(invertPan.set("Invert Pan", false));
     parameters->add(pan.set("Pan", {0}, {0}, {1}));
     parameters->add(tilt.set("Tilt", {0}, {0}, {1}));
-    parameters->add(createDropdownAbstractParameter("Color", {"White", "Dark Red", "Blue", "Green", "Yellow", "Light Green", "Pink", "Turquoise", "Cyan", "Orange", "Rose", "UV", "CTO", "CTB"}, colorDropdown));
+    //{"White", "Dark Red", "Blue", "Green", "Yellow", "Light Green", "Pink", "Turquoise", "Cyan", "Orange", "Rose", "UV", "CTO", "CTB"}
+    parameters->add(createDropdownAbstractParameter("Color", {"White", "Congo", "Cobalt Blue", "Pink", "Aquamarine", "CTB", "Cyan", "Dark Red", "Light Orznge", "Orange", "Tan", "Pale Rose", "Magenta", "Grass Green", "Lavander", "2500k", "Dark Green", "Light Green", "Yellow"}, colorDropdown));
     parameters->add(colorwheel.set("Color", {0}, {0}, {colorDropdown.getMax()}));
-    parameters->add(strobe.set("Strobe", 0, 0, 1));
-    parameters->add(gobo.set("Gobo", 0, 0, 1));
-    parameters->add(frost.set("Frost", 0, 0, 1));
+    addParameterToGroupAndInfo(gobo.set("Gobo", 0, 0, 1)).isSavePreset = false;
+    addParameterToGroupAndInfo(focus.set("Focus", 0, 0, 1)).isSavePreset = false;
+    addParameterToGroupAndInfo(zoom.set("Zoom", 0, 0, 1)).isSavePreset = false;
+    addParameterToGroupAndInfo(frost.set("Frost", 0, 0, 1)).isSavePreset = false;
     parameters->add(masterFader.set("Master Fader", 1, 0, 1));
+    addParameterToGroupAndInfo(lampOn.set("Lamp On", false)).isSavePreset = false;
+    addParameterToGroupAndInfo(lampOff.set("Lamp Off", false)).isSavePreset = false;
     addOutputParameterToGroupAndInfo(output.set("Output", {0}, {0}, {1}));
     
     dropdownListener = colorDropdown.newListener([this](int &i){
@@ -25,41 +31,42 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     });
     
     indexClicked = -1;
-    points.resize(32);
+    points.resize(numHeads);
     isHorizontal = true;
 }
 
 void movingheadController::loadCalibration(){
-    ofJson json = ofLoadJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json");
-    if(!json.empty()){
-        minPan = json["MinPan"].get<vector<float>>();
-        maxPan = json["MaxPan"].get<vector<float>>();
-        minTilt = json["MinTilt"].get<vector<float>>();
-        maxTilt = json["MaxTilt"].get<vector<float>>();
-    }else{
-        minPan = vector<float>(32, 0.5);
-        maxPan = vector<float>(32, 0.1667);
-        minTilt = vector<float>(32, 1);
-        maxTilt = vector<float>(32, 0.5);
-    }
+//    ofJson json = ofLoadJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json");
+//    if(!json.empty()){
+//        minPan = json["MinPan"].get<vector<float>>();
+//        maxPan = json["MaxPan"].get<vector<float>>();
+//        minTilt = json["MinTilt"].get<vector<float>>();
+//        maxTilt = json["MaxTilt"].get<vector<float>>();
+//    }else{
+        minPan = vector<float>(numHeads, 0.5);
+        maxPan = vector<float>(numHeads, 0.1667);
+        minTilt = vector<float>(numHeads, 1);
+        maxTilt = vector<float>(numHeads, 0.5);
+//    }
 }
 
 void movingheadController::saveCalibration(){
-    ofJson json;
-    json["MinPan"] = minPan;
-    json["MaxPan"] = maxPan;
-    json["MinTilt"] = minTilt;
-    json["MaxTilt"] = maxTilt;
-    ofSavePrettyJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json", json);
+//    ofJson json;
+//    json["MinPan"] = minPan;
+//    json["MaxPan"] = maxPan;
+//    json["MinTilt"] = minTilt;
+//    json["MaxTilt"] = maxTilt;
+//    ofSavePrettyJson("MovingHeadCalibration_" + ofToString(numIdentifier) + ".json", json);
 }
 
 void movingheadController::update(ofEventArgs &a){
+    int numChannels = 24;
     vector<float> tempOutput;
     int maxSize = max(pan.get().size(), tilt.get().size());
-    tempOutput.resize(16*32, 0);
+    tempOutput.resize(numChannels*numHeads, 0);
     
-    for(int i = 0; i < 32; i++){
-        int index = i*16;
+    for(int i = 0; i < numHeads; i++){
+        int index = i*numChannels;
         //pan
         float panAtIndex = getValueAtIndex(pan.get(), i);
         if(invertPan) panAtIndex = 1 - panAtIndex;
@@ -73,25 +80,49 @@ void movingheadController::update(ofEventArgs &a){
         tempOutput[index+2] = tiltAtIndex;
         tempOutput[index+3] = tiltAtIndex*255 - int(tiltAtIndex*255);
         
-        //color wheel
-        tempOutput[index+4] = ofMap(getValueAtIndex(colorwheel.get(), i), colorwheel.getMin()[0], colorwheel.getMax()[0]-1, 0.0, 120.0/255.0, true);
+        //PantiltSpeed
+        tempOutput[index+4] = 0;
         
-        //gobo
-        tempOutput[index+6] = gobo;
-        
-        //strobe
-        tempOutput[index+10] = strobe;
+        //Shutter
+        tempOutput[index+5] = 1;
         
         //dimmer
         float dimmerAtIndex = getValueAtIndex(intensity.get(), i) * masterFader;
-        tempOutput[index+11] = dimmerAtIndex;
-        tempOutput[index+12] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
+        tempOutput[index+6] = dimmerAtIndex;
         
-        //frost
-        tempOutput[index+13] = frost;
+        //color wheel
+        //tempOutput[index+4] = ofMap(getValueAtIndex(colorwheel.get(), i), colorwheel.getMin()[0], colorwheel.getMax()[0]-1, 0.0, 120.0/255.0, true);
+        int colorwheelIndex = getValueAtIndex(colorwheel.get(), i);
+        tempOutput[index+7] = colorwheelIndex < 7 ? ofMap(colorwheelIndex, 0, 6, 0, 60.0/255.0, true) : 0;
+        tempOutput[index+8] = (colorwheelIndex >= 7 && colorwheelIndex < 13) ? ofMap(colorwheelIndex, 7, 12, 10.0/255.0, 60.0/255.0, true) : 0;
+        tempOutput[index+9] = colorwheelIndex >= 13 ? ofMap(colorwheelIndex, 13, 19, 10.0/255.0, 60.0/255.0, true) : 0;
         
-        //lamp
-        tempOutput[index+15] = 0;
+        //C, M, & Y
+        tempOutput[index+10] = 0;
+        tempOutput[index+11] = 0;
+        tempOutput[index+12] = 0;
+        
+        //Gobo
+        tempOutput[index+15] = ofMap(gobo, 0, 1, 0, 75.0/255.0);
+        
+        //Frost
+        tempOutput[index+18] = frost;
+        
+        //Focus
+        tempOutput[index+20] = focus;
+        
+        //zoom
+        tempOutput[index+21] = zoom;
+        
+        if(lampOn)
+            tempOutput[index+23] = 85.0f/255.0f;
+        else if(lampOff){
+            tempOutput[index+23] = 75.0f/255.0f;
+//        }else if(reset){
+//            tempOutput[index+15] = 10.0f/255.0f;
+        }else{
+            tempOutput[index+23] = 0;
+        }
     }
     
     output = tempOutput;

@@ -60,10 +60,13 @@ private:
     ofParameter<vector<float>> intensity;
     ofParameter<vector<int>> colorwheel;
     ofParameter<int> colorDropdown;
-    ofParameter<float> strobe;
+    ofParameter<float> focus;
     ofParameter<float> gobo;
     ofParameter<float> frost;
+    ofParameter<float> zoom;
     ofParameter<float> masterFader;
+    ofParameter<bool> lampOn;
+    ofParameter<bool> lampOff;
     ofParameter<vector<float>> output;
     
     vector<float> minPan;
