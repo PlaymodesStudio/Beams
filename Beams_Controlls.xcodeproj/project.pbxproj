@@ -291,6 +291,7 @@
 		9C1A96A2891A3C36C7DCA0F7 /* phasor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = phasor.cpp; path = ../../../addons/ofxOceanode/src/Nodes/Default_Nodes/Generators/phasor.cpp; sourceTree = SOURCE_ROOT; };
 		9C7A8492A4E58437944DDF60 /* function_call.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = function_call.hpp; path = "src/ofxOceanode_modules-scripting/chaiscript/dispatchkit/function_call.hpp"; sourceTree = SOURCE_ROOT; };
 		9E034FA57FE251AC33904E82 /* ofxDatGuiThemes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDatGuiThemes.h; path = ../../../addons/ofxDatGui_PM/src/themes/ofxDatGuiThemes.h; sourceTree = SOURCE_ROOT; };
+		9F1BC4CE21CCECD500DD90CC /* followIndexsToMovingHeads.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = followIndexsToMovingHeads.h; sourceTree = "<group>"; };
 		9F35B155219F1FB800B1D896 /* oscReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oscReceiver.cpp; sourceTree = "<group>"; };
 		9F35B156219F1FB900B1D896 /* oscReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oscReceiver.h; sourceTree = "<group>"; };
 		9F7986DC4EB05E75FCE2C777 /* ofxOscSender.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxOscSender.h; path = ../../../addons/ofxOsc/src/ofxOscSender.h; sourceTree = SOURCE_ROOT; };
@@ -1517,12 +1518,13 @@
 				55BED20F7D5F3CD60B4B8564 /* pantiltEditor.cpp */,
 				F59D07ED95E052917EB11E47 /* vectorPresetEaser.h */,
 				1E1C7958158507C8E0587493 /* strobeLightController.cpp */,
+				9F1BC4CE21CCECD500DD90CC /* followIndexsToMovingHeads.h */,
 				11983BC9563DFD6825F21C55 /* audioEngineController.cpp */,
 				12E10BB577D6995724231CF8 /* strobeLightController.h */,
 				4382BD5A2B98C2963EC37A49 /* valueEaser.h */,
 				B43AD49F16BC56BFD0FEF934 /* followPoint.h */,
-				EC73E78C491B3A6803F51551 /* textureReader.h */,
 				9F43D858F7D1E17A6C3D0054 /* ofxOceanode_modules-vector_op */,
+				EC73E78C491B3A6803F51551 /* textureReader.h */,
 				BCE2FF27C37B237FBB40B911 /* vectorModulator.h */,
 				D06AED0B10BF5278780F9CC6 /* movingheadController.cpp */,
 				7008AEA32F7B0B15CDA39103 /* movingheadController.h */,
