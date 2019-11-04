@@ -24,6 +24,11 @@
 #include "oscReceiver.h"
 #include "sequentialAnalyzer.h"
 #include "followIndexsToMovingHeads.h"
+#include "senderManager.h"
+#include "textureUnifier.h"
+#include "texturePixelmap.h"
+#include "vectorToTexture.h"
+#include "colorApplier.h"
 
 #include "ofxOceanodeBPMController.h"
 
@@ -59,6 +64,11 @@ void ofApp::setup(){
     reg->registerModel<oscReceiver>("OSC");
     reg->registerModel<sequentialAnalyzer>("Modifiers");
     reg->registerModel<followIndexsToMovingHeads>("MovingHeads");
+    reg->registerModel<senderManager>("Texture");
+    reg->registerModel<textureUnifier>("Texture");
+    reg->registerModel<texturePixelmap>("Texture");
+    reg->registerModel<vectorToTexture>("Texture");
+    reg->registerModel<colorApplier>("Texture");
     
     registerVectorOp(reg);
     treg->registerType<ofTexture*>();
@@ -86,10 +96,12 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if(ofGetKeyPressed(OF_KEY_COMMAND)){
-        if(key == 's') container->savePersistent();
+        if(key == 'p') container->savePersistent();
         else if(key == 'u') container->updatePersistent();
-        else if(key == 'c') container->collapseGuis();
+        else if(key == 'k') container->collapseGuis();
         else if(key == 'e') container->expandGuis();
+        else if(key == 's') container->saveCurrentPreset();
+        else if(key == 'r') container->resetPhase();
     }
 }
 
