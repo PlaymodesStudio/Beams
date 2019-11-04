@@ -27,18 +27,27 @@ public:
     
     
 private:
-    void phasorListener(float &f);
+    float getValueForIndex(const vector<float> &vf, int i){
+        if(i < vf.size()){
+            return vf[i];
+        }else{
+            return vf[0];
+        }
+    }
+    
+    void phasorListener(vector<float> &vf);
     void gateInChanged(vector<float> &vf);
     void attackEnd(float *f);
     ofxeasing::function easingFromString(string easing);
     
     ofEventListener listener;
     
-    ofParameter<float> phasor;
-    ofParameter<float>  attack;
-    ofParameter<float>  decay;
-    ofParameter<float>  sustain;
-    ofParameter<float>  release;
+    ofParameter<vector<float>>  phasor;
+    ofParameter<vector<float>>  hold;
+    ofParameter<vector<float>>  attack;
+    ofParameter<vector<float>>  decay;
+    ofParameter<vector<float>>  sustain;
+    ofParameter<vector<float>>  release;
     
     ofParameter<int>  attackCurve;
     ofParameter<int>  decayCurve;
@@ -48,11 +57,13 @@ private:
     ofParameter<vector<float>> output;
     
     vector<float> lastInput;
-    vector<float> lastChangedValue;
     vector<float> phasorValueOnValueChange;
     vector<float> lastPhase;
     vector<bool> reachedMax;
     vector<int> envelopeStage;
+    vector<float> maxValue;
+    vector<float> initialPhase;
+    vector<float> lastSustainValue;
     
     vector<string> easeStringFuncs;
     

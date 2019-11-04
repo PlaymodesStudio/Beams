@@ -8,15 +8,17 @@
 
 #include "envelopeGenerator.h"
 
-envelopeGenerator::envelopeGenerator() : ofxOceanodeNodeModel("Envelope Generator"){
+envelopeGenerator::envelopeGenerator() : ofxOceanodeNodeModel("Envelope Generator")
+{
     easeStringFuncs = {"EASE_LINEAR", " EASE_IN_QUAD", " EASE_OUT_QUAD", " EASE_IN_OUT_QUAD", " EASE_IN_CUBIC", " EASE_OUT_CUBIC", " EASE_IN_OUT_CUBIC", " EASE_IN_QUART", " EASE_OUT_QUART", " EASE_IN_OUT_QUART", " EASE_IN_QUINT", " EASE_OUT_QUINT", " EASE_IN_OUT_QUINT", " EASE_IN_SINE", " EASE_OUT_SINE", " EASE_IN_OUT_SINE", " EASE_IN_EXPO", " EASE_OUT_EXPO", " EASE_IN_OUT_EXPO", " EASE_IN_CIRC", " EASE_OUT_CIRC", "EASE_IN_OUT_CIRC"};
     
-    parameters->add(phasor.set("Phasor In", 0, 0, 1));
+    parameters->add(phasor.set("Phasor In", {0}, {0}, {1}));
     parameters->add(gateIn.set("Gate In", {0}, {0}, {1}));
-    parameters->add(attack.set("Attack", 0, 0, 1));
-    parameters->add(decay.set("Decay", 0, 0, 1));
-    parameters->add(sustain.set("Sustain", 1, 0, 1));
-    parameters->add(release.set("Release", 0, 0, 1));
+    parameters->add(hold.set("Hold", {0}, {0}, {1}));
+    parameters->add(attack.set("Attack", {0}, {0}, {1}));
+    parameters->add(decay.set("Decay", {0}, {0}, {1}));
+    parameters->add(sustain.set("Sustain", {1}, {0}, {1}));
+    parameters->add(release.set("Release", {0}, {0}, {1}));
 
     parameters->add(createDropdownAbstractParameter("Attack Ease", easeStringFuncs, attackCurve));
     parameters->add(createDropdownAbstractParameter("Decay Ease", easeStringFuncs, decayCurve));
@@ -31,22 +33,25 @@ envelopeGenerator::envelopeGenerator() : ofxOceanodeNodeModel("Envelope Generato
     lastGateInSize = -1;
 }
 
-void envelopeGenerator::phasorListener(float &f){
+void envelopeGenerator::phasorListener(vector<float> &vf){
     int inputSize = gateIn.get().size();
     if(inputSize != lastGateInSize){
         output = vector<float>(inputSize, 0);
         lastInput = vector<float>(inputSize, 0);
-        lastChangedValue = vector<float>(inputSize, 0);
-        phasorValueOnValueChange = vector<float>(inputSize, f);
+        phasorValueOnValueChange = vector<float>(inputSize, 0);
         lastPhase = vector<float>(inputSize, 0);
         reachedMax = vector<bool>(inputSize, false);
         envelopeStage = vector<int>(inputSize, envelopeEnd);
+        maxValue = vector<float>(inputSize, 0);
+        initialPhase = vector<float>(inputSize, 0);
+        lastSustainValue = vector<float>(inputSize, 0);
         lastGateInSize = inputSize;
     }else{
         for(int i = 0; i < inputSize; i++){
+            float f = getValueForIndex(vf, i);
             if(lastInput[i] == 0 && gateIn.get()[i] != 0){
-                if(attack == 0){
-                    if(decay == 0){
+                if(getValueForIndex(attack, i) == 0){
+                    if(getValueForIndex(decay, i) == 0){
                         envelopeStage[i] = envelopeSustain;
                     }else{
                         envelopeStage[i] = envelopeDecay;
@@ -57,30 +62,51 @@ void envelopeGenerator::phasorListener(float &f){
                 phasorValueOnValueChange[i] = f;
                 reachedMax[i] = false;
                 lastPhase[i] = 0;
-                lastChangedValue[i] = lastInput[i];
+                maxValue[i] = gateIn.get()[i];
+                initialPhase[i] = f;
+                lastSustainValue[i] = gateIn.get()[i];
             }else if(lastInput[i] != 0 && gateIn.get()[i] == 0){
-                if(release == 0){
-                    envelopeStage[i] = envelopeEnd;
-                }else{
-                    envelopeStage[i] = envelopeRelease;
+                if(getValueForIndex(hold, i) == 0){
+                    if(getValueForIndex(release, i) > 0){
+                        envelopeStage[i] = envelopeRelease;
+                    }else{
+                        envelopeStage[i] = envelopeEnd;
+                    }
+                    phasorValueOnValueChange[i] = f;
+                    reachedMax[i] = false;
+                    lastPhase[i] = 0;
                 }
-                phasorValueOnValueChange[i] = f;
-                reachedMax[i] = false;
-                lastPhase[i] = 0;
-                lastChangedValue[i] = lastInput[i];
             }
         }
         vector<float> tempOutput = gateIn.get();
         for(int i = 0; i < inputSize; i++){
+            float f = getValueForIndex(vf, i);
             float phase = f - phasorValueOnValueChange[i];
             if(phase < 0) phase = 1+phase;
             if(phase < lastPhase[i]) reachedMax[i] = true;
             else lastPhase[i] = phase;
             
-            if(envelopeStage[i] == envelopeAttack){
-                if(phase > attack || reachedMax[i] == true){
+            if(getValueForIndex(hold, i) > 0){
+                float holdPhase = f - initialPhase[i];
+                if(holdPhase < 0) holdPhase += 1;
+                
+                if(holdPhase > getValueForIndex(hold, i) && envelopeStage[i] != envelopeRelease && envelopeStage[i] != envelopeEnd){
                     phasorValueOnValueChange[i] = f;
-                    if(decay == 0){
+                    if(getValueForIndex(release, i) > 0){
+                        envelopeStage[i] = envelopeRelease;
+                    }else{
+                        envelopeStage[i] = envelopeEnd;
+                    }
+                    reachedMax[i] = false;
+                    lastPhase[i] = 0;
+                    phase = 0;
+                }
+            }
+            
+            if(envelopeStage[i] == envelopeAttack){
+                if(phase > getValueForIndex(attack, i) || reachedMax[i] == true){
+                    phasorValueOnValueChange[i] = f;
+                    if(getValueForIndex(decay, i) == 0){
                         envelopeStage[i] = envelopeSustain;
                     }else{
                         envelopeStage[i] = envelopeDecay;
@@ -89,32 +115,37 @@ void envelopeGenerator::phasorListener(float &f){
                     lastPhase[i] = 0;
                     phase = 0;
                 }else{
-                    tempOutput[i] = ofxeasing::map(phase, 0, attack, 0, gateIn.get()[i], easingFromString(easeStringFuncs[attackCurve]));
+                    tempOutput[i] = ofxeasing::map(phase, 0, getValueForIndex(attack, i), 0, 1, easingFromString(easeStringFuncs[attackCurve]));
+                    if(phase != 0){
+                        lastSustainValue[i] = tempOutput[i];
+                    }
                 }
             }
             if(envelopeStage[i] == envelopeDecay){
-                if(phase > decay || reachedMax[i] == true){
+                if(phase > getValueForIndex(decay, i) || reachedMax[i] == true){
                     phasorValueOnValueChange[i] = f;
                     envelopeStage[i] = envelopeSustain;
                     reachedMax[i] = false;
                     lastPhase[i] = 0;
                     phase = 0;
                 }else{
-                    tempOutput[i] = ofxeasing::map(phase, 0, decay, gateIn.get()[i], sustain * gateIn.get()[i], easingFromString(easeStringFuncs[decayCurve]));
+                    tempOutput[i] = ofxeasing::map(phase, 0, getValueForIndex(decay, i), 1, getValueForIndex(sustain, i) * maxValue[i], easingFromString(easeStringFuncs[decayCurve]));
+                    lastSustainValue[i] = tempOutput[i];
                 }
             }
             if(envelopeStage[i] == envelopeSustain){
-                tempOutput[i] = gateIn.get()[i] * sustain;
+                tempOutput[i] = maxValue[i] * getValueForIndex(sustain, i);
+                lastSustainValue[i] = tempOutput[i];
             }
             if(envelopeStage[i] == envelopeRelease){
-                if(phase > release || reachedMax[i] == true){
+                if(phase > getValueForIndex(release, i) || reachedMax[i] == true){
                     phasorValueOnValueChange[i] = f;
                     envelopeStage[i] = envelopeEnd;
                     reachedMax[i] = false;
                     lastPhase[i] = 0;
                     phase = 0;
                 }else{
-                    tempOutput[i] = ofxeasing::map(phase, 0, release, sustain * lastChangedValue[i], 0, easingFromString(easeStringFuncs[releaseCurve]));
+                    tempOutput[i] = ofxeasing::map(phase, 0, getValueForIndex(release, i), lastSustainValue[i], 0, easingFromString(easeStringFuncs[releaseCurve]));
                 }
             }
             if(envelopeStage[i] == envelopeEnd){
