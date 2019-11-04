@@ -13,11 +13,15 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     intensity.resize(numGroups);
     pan.resize(numGroups);
     tilt.resize(numGroups);
-    colorDropdown.resize(numGroups);
-    colorwheel.resize(numGroups);
+//    colorDropdown.resize(numGroups);
+//    colorwheel.resize(numGroups);
     strobe.resize(numGroups);
     gobo.resize(numGroups);
     frost.resize(numGroups);
+    red.resize(numGroups);
+    green.resize(numGroups);
+    blue.resize(numGroups);
+    dmxOutputs.resize(2);
     for(int i = 0 ; i < numGroups; i++){
         ofParameter<char> label;
         parameters->add(label.set("Group " + ofToString(i) + "      ----------------------------------", ' '));
@@ -25,15 +29,18 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
         parameters->add(intensity[i].set("Intensity " + ofToString(i), {0}, {0}, {1}));
         parameters->add(pan[i].set("Pan " + ofToString(i), {0}, {-180}, {180}));
         parameters->add(tilt[i].set("Tilt " + ofToString(i), {0}, {-180}, {180}));
-        parameters->add(createDropdownAbstractParameter("Color " + ofToString(i), {"White", "Red", "Orange", "Yellow", "Green-Blue", "Amber", "Blue Sky", "Green", "UV", "Light Red", "Magenta", "Dark Green", "Dark Yellow", "Blue"}, colorDropdown[i]));
-        parameters->add(colorwheel[i].set("Color " + ofToString(i), {0}, {0}, {colorDropdown[i].getMax()}));
-        parameters->add(strobe[i].set("Zoom " + ofToString(i), 0, 0, 1));
+//        parameters->add(createDropdownAbstractParameter("Color " + ofToString(i), {"White", "Red", "Orange", "Yellow", "Green-Blue", "Amber", "Blue Sky", "Green", "UV", "Light Red", "Magenta", "Dark Green", "Dark Yellow", "Blue"}, colorDropdown[i]));
+//        parameters->add(colorwheel[i].set("Color " + ofToString(i), {0}, {0}, {colorDropdown[i].getMax()}));
+        parameters->add(red[i].set("Red " + ofToString(i), {1}, {0}, {1}));
+        parameters->add(green[i].set("Green " + ofToString(i), {1}, {0}, {1}));
+        parameters->add(blue[i].set("Blue " + ofToString(i), {1}, {0}, {1}));
+        parameters->add(strobe[i].set("Zoom " + ofToString(i), 1, 0, 1));
         parameters->add(gobo[i].set("Gobo " + ofToString(i), 0, 0, 1));
         parameters->add(frost[i].set("Focus " + ofToString(i), 0, 0, 1));
         
-        dropdownListeners.push(colorDropdown[i].newListener([this, i](int &ind){
-            colorwheel[i] = vector<int>(1, ind);
-        }));
+//        dropdownListeners.push(colorDropdown[i].newListener([this, i](int &ind){
+//            colorwheel[i] = vector<int>(1, ind);
+//        }));
         sizeListeners.push(size[i].newListener([this](int &s){
             totalSize = 0;
             for(auto s : size) totalSize += s;
@@ -47,7 +54,8 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     addParameterToGroupAndInfo(lampOn.set("Lamp On", false));
     addParameterToGroupAndInfo(lampOff.set("Lamp Off", false));
     addParameterToGroupAndInfo(reset.set("Reset", false));
-    addOutputParameterToGroupAndInfo(dmxOutput.set("Dmx Output", {0}, {0}, {1}));
+    addOutputParameterToGroupAndInfo(dmxOutputs[0].set("Dmx Output 0", {0}, {0}, {1}));
+    addOutputParameterToGroupAndInfo(dmxOutputs[1].set("Dmx Output 1", {0}, {0}, {1}));
     addOutputParameterToGroupAndInfo(panOutput.set("Pan Output", {0}, {-180}, {180}));
     addOutputParameterToGroupAndInfo(tiltOutput.set("Tilt Output", {0}, {-180}, {180}));
     addOutputParameterToGroupAndInfo(colorOutput.set("Color Output", {0}, {0}, {1}));
@@ -58,7 +66,7 @@ movingheadController::movingheadController() : ofxOceanodeNodeModelExternalWindo
     
     totalSize = 4;
     panRange = 540;
-    tiltRange = 230;
+    tiltRange = 271;
 }
 
 void movingheadController::loadCalibration(){
@@ -85,7 +93,7 @@ void movingheadController::saveCalibration(){
 }
 
 void movingheadController::update(ofEventArgs &a){
-    int nChannels = 16;
+    int nChannels = 23;
     
     vector<vector<float>> dmxInfo;
     vector<float> panInfo;
@@ -105,28 +113,46 @@ void movingheadController::update(ofEventArgs &a){
         for(int j = 0; j < size[i]; j++){
             int index = j + accumulateSizes;
             
+            dmxInfo[index][0] = 30.0/255.0;
+            
+            
+            
+            //dimmer
+            float dimmerAtIndex = getValueAtIndex(intensity[i].get(), j) * masterFader;
+            dmxInfo[index][1] = dimmerAtIndex;
+            
+            dmxInfo[index][2] = 1 - getValueAtIndex(red[i].get(), j);
+            dmxInfo[index][3] = 1 - getValueAtIndex(green[i].get(), j);
+            dmxInfo[index][4] = 1 - getValueAtIndex(blue[i].get(), j);
+            
+            dmxInfo[index][16] = frost[i];
+            dmxInfo[index][17] = frost[i]*255 - int(frost[i]*255);
+            
             //pan
             float panAtIndex = getValueAtIndex(pan[i].get(), j);
             panInfo[index] = ofClamp(panAtIndex, -180, 180);
-            panAtIndex = ofMap(panAtIndex+90, -panRange/2 + panOffset[index], panRange/2 + panOffset[index], 0, 1, true);
-            dmxInfo[index][0] = panAtIndex;
-            dmxInfo[index][1] = panAtIndex*255 - int(panAtIndex*255);
+            panAtIndex = ofMap(panAtIndex, -panRange/2 + panOffset[index], panRange/2 + panOffset[index], 0, 1, true);
+            dmxInfo[index][18] = panAtIndex;
+            dmxInfo[index][19] = panAtIndex*255 - int(panAtIndex*255);
             
             //tilt
             float tiltAtIndex = getValueAtIndex(tilt[i].get(), j);
             tiltInfo[index] = ofClamp(tiltAtIndex, -180, 180);
-            tiltAtIndex = ofMap(tiltAtIndex, -tiltRange/2 + tiltOffset[index], tiltRange/2 + tiltOffset[index], 0, 1, true);
-            dmxInfo[index][2] = tiltAtIndex;
-            dmxInfo[index][3] = tiltAtIndex*255 - int(tiltAtIndex*255);
+            tiltAtIndex = ofMap(-tiltAtIndex, -tiltRange/2 + tiltOffset[index], tiltRange/2 + tiltOffset[index], 0, 1, true);
+            dmxInfo[index][20] = tiltAtIndex;
+            dmxInfo[index][21] = tiltAtIndex*255 - int(tiltAtIndex*255);
             
+            
+            //zoom
+            dmxInfo[index][15] = ofMap(strobe[i], 0, 1, 0, 1);
+            
+            /*
             //pan/tilt speed
             dmxInfo[index][4] = 0;
             
             dmxInfo[index][5] = 1; //Shutter open
             
-            //dimmer
-            float dimmerAtIndex = getValueAtIndex(intensity[i].get(), j) * masterFader;
-            dmxInfo[index][6] = dimmerAtIndex;
+            
             //dmxInfo[index][23] = dimmerAtIndex*255 - int(dimmerAtIndex*255);
             
             //color wheel
@@ -138,9 +164,6 @@ void movingheadController::update(ofEventArgs &a){
             
             //frost
             dmxInfo[index][13] = ofMap(frost[i], 0, 1, 0, 1);
-            
-            //strobe
-            dmxInfo[index][14] = ofMap(strobe[i], 0, 1, 0, 1);
             
             if(lampOn)
                 dmxInfo[index][15] = 84.0f/255.0f;
@@ -205,18 +228,27 @@ void movingheadController::update(ofEventArgs &a){
                     colorValue = ofColor::white;
                     break;
             }
-            
-            colorInfo[index*3] = float(colorValue[0]) / 255.0 * dimmerAtIndex;
-            colorInfo[(index*3)+1] = float(colorValue[1]) / 255.0 * dimmerAtIndex;
-            colorInfo[(index*3)+2] = float(colorValue[2]) / 255.0 * dimmerAtIndex;
+            */
+            colorInfo[index*3] = getValueAtIndex(red[i].get(), j) * dimmerAtIndex;
+            colorInfo[(index*3)+1] = getValueAtIndex(green[i].get(), j) * dimmerAtIndex;
+            colorInfo[(index*3)+2] = getValueAtIndex(blue[i].get(), j) * dimmerAtIndex;
+             
         }
     }
     
-    vector<float> tempOutput(dmxInfo.size()*nChannels);
-    for(int i = 0; i < dmxInfo.size()*16; i++){
-        tempOutput[i] = dmxInfo[i/16][i%16];
+    vector<float> tempOutput(dmxInfo.size()*nChannels/2);
+    for(int i = 0; i < (dmxInfo.size()*nChannels / 2); i++){
+        tempOutput[i] = dmxInfo[i/nChannels][i%nChannels];
     }
-    dmxOutput = tempOutput;
+    dmxOutputs[0] = tempOutput;
+    
+    tempOutput.resize(dmxInfo.size()*nChannels / 2);
+    for(int i = 0; i < (dmxInfo.size()*nChannels / 2); i++){
+        int newI = i + dmxInfo.size()*nChannels / 2;
+        tempOutput[i] = dmxInfo[newI/nChannels][newI%nChannels];
+    }
+    dmxOutputs[1] = tempOutput;
+    
     panOutput = panInfo;
     tiltOutput = tiltInfo;
     colorOutput = colorInfo;
