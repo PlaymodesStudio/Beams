@@ -18,6 +18,8 @@ public:
     void setup() override;
     void update(ofEventArgs &e) override;
     
+    void rgbToRgbw(float &r, float &g, float &b, float &w, bool clamp);
+    
     void presetHasLoaded() override {
         red = {0};
         green = {0};
@@ -28,7 +30,7 @@ public:
 private:
     
     ofParameter<int> numElements;
-    ofParameter<int> lightType;
+//    ofParameter<int> lightType;
     ofParameter<vector<float>> red;
     ofParameter<vector<float>> green;
     ofParameter<vector<float>> blue;
@@ -37,7 +39,7 @@ private:
     ofParameter<float> masterFader;
     ofParameter<vector<float>> strobeRate;
     ofParameter<vector<float>> strobeWidth;
-    ofParameter<vector<float>> dmxOutput;
+    vector<ofParameter<vector<float>>> dmxOutputs;
     ofParameter<vector<float>> colorOutput;
 };
 
