@@ -35,24 +35,34 @@ void midiGateIn::setup(){
 void midiGateIn::update(ofEventArgs &e){
     if(mutex.try_lock()){
         parameters->get("Output").cast<vector<float>>() = outputStore;
+        activatedNotes.clear();
+        for(auto &n : toShutNotes){
+            outputStore[n] = 0;
+        }
+        toShutNotes.clear();
         mutex.unlock();
     }
 }
 
 void midiGateIn::newMidiMessage(ofxMidiMessage &eventArgs){
-    if(eventArgs.status == MIDI_NOTE_ON && (eventArgs.channel == midiChannel || midiChannel == 0)){
+    if((eventArgs.status == MIDI_NOTE_ON && eventArgs.velocity != 0) && (eventArgs.channel == midiChannel || midiChannel == 0)){
         if(eventArgs.pitch >= noteOnStart && eventArgs.pitch <= noteOnEnd){
             {
                 mutex.lock();
                 outputStore[eventArgs.pitch - noteOnStart] = (float)eventArgs.velocity/(float)127;
+                activatedNotes.push_back(eventArgs.pitch - noteOnStart);
                 mutex.unlock();
             }
         }
-    }else if(eventArgs.status == MIDI_NOTE_OFF && (eventArgs.channel == midiChannel || midiChannel == 0)){
+    }else if((eventArgs.status == MIDI_NOTE_OFF || (eventArgs.status == MIDI_NOTE_ON && eventArgs.velocity == 0)) && (eventArgs.channel == midiChannel || midiChannel == 0)){
         if(eventArgs.pitch >= noteOnStart && eventArgs.pitch <= noteOnEnd){
             {
                 mutex.lock();
-                outputStore[eventArgs.pitch - noteOnStart] = 0;
+                if(find(activatedNotes.begin(), activatedNotes.end(), eventArgs.pitch - noteOnStart) != activatedNotes.end()){
+                    toShutNotes.push_back(eventArgs.pitch - noteOnStart);
+                }else{
+                    outputStore[eventArgs.pitch - noteOnStart] = 0;
+                }
                 mutex.unlock();
             }
         }

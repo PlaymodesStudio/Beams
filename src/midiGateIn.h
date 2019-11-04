@@ -39,6 +39,8 @@ private:
     
     ofxMidiIn*   midiIn;
     vector<float>   outputStore;
+    vector<int> activatedNotes;
+    vector<int> toShutNotes;
     ofMutex mutex;
 };
 
